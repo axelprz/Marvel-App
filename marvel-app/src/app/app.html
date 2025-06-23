@@ -1,0 +1,58 @@
+<nav class="bg-gray-800 text-white p-4 flex justify-between items-center">
+  <div>
+    <a routerLink="/marvel" class="font-bold text-lg mr-4 hover:underline"
+      >MarvelApp</a
+    >
+    <a routerLink="/marvel" class="mr-2 hover:underline">Inicio</a>
+  </div>
+  <div *ngIf="!(authService.user$ | async); else logged">
+    <a routerLink="/login" class="mr-4 hover:underline">Login</a>
+    <a routerLink="/register" class="hover:underline">Registro</a>
+    <a routerLink="/favoritos" class="mr-4 hover:underline">Favoritos</a>
+  </div>
+  <ng-template #logged>
+    <div class="relative inline-block text-left">
+      <button
+        (click)="menuOpen = !menuOpen"
+        class="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600 text-sm"
+      >
+        Cuenta
+      </button>
+
+      <div
+        *ngIf="menuOpen"
+        class="absolute right-0 mt-2 w-52 bg-white rounded shadow-md text-gray-800 z-50"
+      >
+        <div class="px-4 py-2 border-b border-gray-200 text-sm">
+          {{ (authService.user$ | async)?.email }}
+        </div>
+
+        <a
+          routerLink="/favoritos"
+          (click)="menuOpen = false"
+          class="block px-4 py-2 text-sm hover:bg-gray-100"
+        >
+          Favoritos
+        </a>
+
+        <button
+          (click)="logout()"
+          class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 text-sm"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</nav>
+
+<div
+  *ngIf="toast.message$ | async as message"
+  class="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow z-50 animate-fade-in-out"
+>
+  {{ message }}
+</div>
+
+<main class="p-4">
+  <router-outlet></router-outlet>
+</main>

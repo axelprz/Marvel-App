@@ -1,0 +1,84 @@
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">Mis favoritos</h2>
+
+  <div *ngIf="loading">Cargando favoritos...</div>
+  <div *ngIf="!loading && favorites.length === 0">
+    No tenés personajes favoritos.
+  </div>
+
+  <div class="mb-4 flex flex-wrap gap-4 items-center text-sm">
+    <input
+      [(ngModel)]="searchTerm"
+      name="search"
+      placeholder="Buscar personaje"
+      class="p-2 border rounded"
+      (input)="applyFilters()"
+    />
+
+    <label>
+      Ordenar por:
+      <select
+        [(ngModel)]="orderBy"
+        name="orderBy"
+        class="ml-2 p-1 border rounded"
+        (change)="applyFilters()"
+      >
+        <option value="name">Nombre</option>
+        <option value="-name">Nombre (desc)</option>
+        <option value="modified">Modificado</option>
+        <option value="-modified">Modificado (desc)</option>
+      </select>
+    </label>
+
+    <label class="flex items-center gap-1">
+      <input
+        type="checkbox"
+        [(ngModel)]="onlyWithDescription"
+        name="onlyWithDescription"
+        (change)="applyFilters()"
+      />
+      Solo con descripción
+    </label>
+
+    <label class="flex items-center gap-1">
+      Modificado desde:
+      <input
+        type="date"
+        [(ngModel)]="modifiedSince"
+        name="modifiedSince"
+        class="p-1 border rounded"
+        (change)="applyFilters()"
+      />
+    </label>
+    <button
+      (click)="clearFilters()"
+      class="text-sm text-blue-600 underline hover:text-blue-800"
+    >
+      Limpiar filtros
+    </button>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4" *ngIf="!loading">
+    <div *ngFor="let char of filteredFavorites" class="relative">
+      <a
+        [routerLink]="['/personaje', char.id]"
+        class="block border rounded p-2 shadow text-center hover:bg-gray-50 transition"
+      >
+        <img
+          [src]="char.thumbnail.path + '.' + char.thumbnail.extension"
+          [alt]="char.name"
+          class="w-full h-48 object-cover rounded mb-2"
+        />
+        <h3 class="font-semibold">{{ char.name }}</h3>
+      </a>
+
+      <button
+        (click)="remove(char.id); $event.stopPropagation(); $event.preventDefault()"
+        class="absolute top-2 right-2 text-xl text-red-500 z-10"
+        [disabled]="pending.has(char.id)"
+      >
+        <span [ngClass]="{ 'animate-pulse': pending.has(char.id) }">♥</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="max-w-sm mx-auto mt-10 p-6 bg-white shadow rounded">
+  <h2 class="text-xl font-bold mb-4">Iniciar sesión</h2>
+  <form (ngSubmit)="login()">
+    <input
+      [(ngModel)]="email"
+      name="email"
+      type="email"
+      placeholder="Email"
+      class="w-full mb-2 p-2 border rounded"
+      required
+    />
+    <input
+      [(ngModel)]="password"
+      name="password"
+      type="password"
+      placeholder="Contraseña"
+      class="w-full mb-4 p-2 border rounded"
+      required
+    />
+    <button class="bg-green-500 w-full text-white p-2 rounded">
+      Iniciar sesión
+    </button>
+  </form>
+</div>

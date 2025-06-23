@@ -1,0 +1,32 @@
+<div class="p-4" *ngIf="loading">Cargando personaje...</div>
+
+<div class="p-4">
+  <button
+    (click)="volver()"
+    class="mb-4 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+  >
+    ← Volver
+  </button>
+</div>
+
+<div class="p-4 max-w-2xl mx-auto" *ngIf="!loading && character">
+  <h2 class="text-3xl font-bold mb-4">{{ character.name }}</h2>
+  <img
+    [src]="character.thumbnail.path + '.' + character.thumbnail.extension"
+    [alt]="character.name"
+    class="w-full rounded shadow mb-4"
+  />
+  <p *ngIf="character.description; else sinDesc">{{ character.description }}</p>
+  <ng-template #sinDesc
+    ><p class="italic text-gray-500">
+      Sin descripción disponible.
+    </p></ng-template
+  >
+
+  <div class="mt-6">
+    <h3 class="text-xl font-semibold">Comics:</h3>
+    <ul class="list-disc ml-5 text-sm text-gray-700">
+      <li *ngFor="let comic of character.comics.items">{{ comic.name }}</li>
+    </ul>
+  </div>
+</div>
