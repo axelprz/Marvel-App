@@ -1,16 +1,25 @@
 <!-- login.html -->
 <div
-  class="flex flex-col items-center justify-center min-h-[calc(100vh-69px)] pt-10 pb-12 px-4 bg-marvel-dark"
+  class="auth-page-background flex flex-col items-center justify-center min-h-[calc(100vh-69px)] pt-10 pb-12 px-4"
 >
-  <div class="form-container-card w-full max-w-md p-8 md:p-10">
-    <!-- Ya no necesita 'login-card' si el borde rojo es para todos -->
-    <!-- ... (resto del contenido del formulario como en el ejemplo anterior, pero el botón principal ahora será solo 'btn-submit') ... -->
+  <!-- ^-- Clase 'auth-page-background' añadida aquí -->
+  <!-- El bg-marvel-dark de Tailwind se puede quitar de aquí ya que el body o el ::before lo manejan -->
+
+  <div
+    class="form-container-card w-full max-w-md p-8 md:p-10 rounded-xl shadow-2xl"
+  >
+    <!-- ... resto del contenido del formulario de login sin cambios ... -->
+    <div class="text-center mb-8">
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+        Iniciar Sesión
+      </h2>
+      <p class="subtitle mt-2 text-sm">Accede a tu cuenta de MarvelApp</p>
+    </div>
     <form (ngSubmit)="login()" class="space-y-6">
-      <!-- ... (campos de email y password sin cambios estructurales, los estilos vienen de CSS) ... -->
       <div>
-        <label for="login-email" class="block text-sm font-medium mb-1.5">
-          Email
-        </label>
+        <label for="login-email" class="block text-sm font-medium mb-1.5"
+          >Email</label
+        >
         <div class="relative">
           <div
             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
@@ -20,7 +29,6 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              aria-hidden="true"
             >
               <path
                 d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
@@ -42,9 +50,9 @@
         </div>
       </div>
       <div>
-        <label for="login-password" class="block text-sm font-medium mb-1.5">
-          Contraseña
-        </label>
+        <label for="login-password" class="block text-sm font-medium mb-1.5"
+          >Contraseña</label
+        >
         <div class="relative">
           <div
             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
@@ -54,7 +62,6 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              aria-hidden="true"
             >
               <path
                 fill-rule="evenodd"
@@ -75,15 +82,12 @@
         </div>
       </div>
       <div>
-        <button type="submit" class="btn-submit w-full">
-          <!-- Solo clase .btn-submit y w-full de Tailwind -->
-          Iniciar sesión
-        </button>
+        <button type="submit" class="btn-submit w-full">Iniciar sesión</button>
       </div>
     </form>
     <p class="link-auth-alternative mt-10 text-center text-sm">
       ¿No tienes cuenta?
-      <a routerLink="/register" class="font-medium"> Regístrate aquí </a>
+      <a routerLink="/register" class="font-medium">Regístrate aquí</a>
     </p>
   </div>
 </div>

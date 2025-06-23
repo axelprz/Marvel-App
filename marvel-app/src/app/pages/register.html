@@ -1,49 +1,34 @@
 <!-- register.html -->
 <div
-  class="flex flex-col items-center justify-center min-h-[calc(100vh-69px)] pt-10 pb-12 px-4 bg-marvel-dark"
+  class="auth-page-background flex flex-col items-center justify-center min-h-[calc(100vh-69px)] pt-10 pb-12 px-4"
 >
-  <!-- bg-marvel-dark es opcional aquí si ya lo tiene el body desde styles.css -->
-  <div class="form-container-card w-full max-w-md p-8 md:p-10">
-    <!-- Aplicamos .form-container-card que ya tiene el borde superior rojo y fondo oscuro -->
-    <!-- Clases Tailwind para tamaño, padding, etc., se mantienen: w-full, max-w-md, p-8, md:p-10 -->
-    <!-- Eliminamos: rounded-xl, shadow-2xl, border-t-4, border-marvel-accent-blue, hover:shadow-marvel-glow-blue
-         ya que .form-container-card los maneja o son reemplazados por el estilo unificado.
-         Las clases de Tailwind para rounded y shadow pueden quedarse si te gusta ese efecto específico sobre el de CSS.
-         Por ejemplo, podrías mantener rounded-xl y shadow-2xl aquí si prefieres las sombras de Tailwind.
-         Vamos a mantenerlas por ahora para consistencia con el login.html anterior. -->
-    <!-- Para ser consistentes con el login.html anterior, mantenemos rounded-xl y shadow-2xl de Tailwind -->
-    <!-- <div class="form-container-card w-full max-w-md p-8 md:p-10 rounded-xl shadow-2xl"> -->
+  <!-- ^-- Clase 'auth-page-background' añadida aquí -->
+  <!-- El bg-marvel-dark de Tailwind se puede quitar de aquí -->
 
+  <div
+    class="form-container-card w-full max-w-md p-8 md:p-10 rounded-xl shadow-2xl"
+  >
+    <!-- ... resto del contenido del formulario de registro sin cambios ... -->
     <div class="text-center mb-8">
       <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
-        <!-- Estilo del título desde CSS (.form-container-card h2), tipografía desde Tailwind -->
         Crear Cuenta
       </h2>
-      <p class="subtitle mt-2 text-sm">
-        <!-- Clase CSS (.form-container-card p.subtitle), margen y tamaño desde Tailwind -->
-        Únete a la comunidad de MarvelApp
-      </p>
+      <p class="subtitle mt-2 text-sm">Únete a la comunidad de MarvelApp</p>
     </div>
-
     <form (ngSubmit)="register()" class="space-y-6">
-      <!-- Espaciado entre elementos del form con Tailwind -->
       <div>
-        <label for="register-email" class="block text-sm font-medium mb-1.5">
-          <!-- Estilo label desde CSS, layout/font-size desde Tailwind -->
-          Email
-        </label>
+        <label for="register-email" class="block text-sm font-medium mb-1.5"
+          >Email</label
+        >
         <div class="relative">
-          <!-- Contenedor para el ícono -->
           <div
             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
           >
-            <!-- Posicionamiento e ícono con Tailwind, color de ícono también -->
             <svg
               class="h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              aria-hidden="true"
             >
               <path
                 d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
@@ -64,11 +49,10 @@
           />
         </div>
       </div>
-
       <div>
-        <label for="register-password" class="block text-sm font-medium mb-1.5">
-          Contraseña
-        </label>
+        <label for="register-password" class="block text-sm font-medium mb-1.5"
+          >Contraseña</label
+        >
         <div class="relative">
           <div
             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
@@ -78,7 +62,6 @@
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              aria-hidden="true"
             >
               <path
                 fill-rule="evenodd"
@@ -98,27 +81,13 @@
           />
         </div>
       </div>
-
-      <!-- Opcional: Campo para confirmar contraseña si lo tienes en tu lógica -->
-      <!-- <div class="space-y-1">
-        <label for="confirm-password" class="block text-sm font-medium">Confirmar Contraseña</label>
-        <input id="confirm-password" name="confirm-password" type="password" class="w-full" required />
-      </div> -->
-
       <div>
-        <button type="submit" class="btn-submit w-full">
-          <!-- Clase CSS: btn-submit (para colores de fondo/texto y estilos base del botón) -->
-          <!-- Tailwind: w-full (para ancho completo) -->
-          <!-- Las transiciones, transformaciones de hover/active vienen de .btn-submit en CSS -->
-          Registrarse
-        </button>
+        <button type="submit" class="btn-submit w-full">Registrarse</button>
       </div>
     </form>
-
     <p class="link-auth-alternative mt-10 text-center text-sm">
-      <!-- Clase CSS para el estilo del texto base, Tailwind para márgenes y alineación -->
       ¿Ya tienes una cuenta?
-      <a routerLink="/login" class="font-medium"> Inicia sesión </a>
+      <a routerLink="/login" class="font-medium">Inicia sesión</a>
     </p>
   </div>
 </div>

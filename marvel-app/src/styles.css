@@ -780,3 +780,43 @@ nav.app-navbar .dropdown-panel .logout-button {
 .info-list li:last-child {
   border-bottom: none;
 }
+
+body {
+  background-color: var(--marvel-dark); /* Fondo oscuro base para toda la aplicación */
+  color: var(--marvel-light-gray);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* Eliminamos cualquier background-image del body si lo pusimos antes para el home */
+}
+
+/* Contenedor específico para las páginas de autenticación con fondo */
+.auth-page-background {
+  position: relative; /* Para el pseudo-elemento de superposición */
+  background-image: url('assets/images/venom-bg.jpg'); /* Ajusta la ruta si es diferente */
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
+  /* min-height ya está en el div del HTML (min-h-[calc(...)]) */
+  /* Los estilos de flex para centrar el formulario ya están en el HTML */
+}
+
+/* Superposición oscura semitransparente para mejorar legibilidad del formulario */
+.auth-page-background::before {
+  content: "";
+  position: absolute; /* Se posicionará relativo al .auth-page-background */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65); /* Negro con 65% de opacidad. AJUSTA esta opacidad */
+  z-index: 1; /* Detrás del contenido del formulario, pero encima de la imagen de fondo */
+}
+
+/* Asegurar que el contenido del formulario esté por encima de la superposición */
+.auth-page-background .form-container-card {
+  position: relative; /* Para que el z-index funcione correctamente */
+  z-index: 2;
+  /* Los estilos de .form-container-card (fondo, borde, etc.) se mantienen */
+  /* Podrías querer hacer el fondo de la card ligeramente más opaco si es necesario */
+  /* background-color: rgba(32, 32, 32, 0.95); /* Ejemplo: var(--marvel-charcoal) un poco más opaco */
+}
