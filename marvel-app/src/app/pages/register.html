@@ -1,1 +1,124 @@
-<p>register works!</p>
+<!-- register.html -->
+<div
+  class="flex flex-col items-center justify-center min-h-[calc(100vh-69px)] pt-10 pb-12 px-4 bg-marvel-dark"
+>
+  <!-- bg-marvel-dark es opcional aquí si ya lo tiene el body desde styles.css -->
+  <div class="form-container-card w-full max-w-md p-8 md:p-10">
+    <!-- Aplicamos .form-container-card que ya tiene el borde superior rojo y fondo oscuro -->
+    <!-- Clases Tailwind para tamaño, padding, etc., se mantienen: w-full, max-w-md, p-8, md:p-10 -->
+    <!-- Eliminamos: rounded-xl, shadow-2xl, border-t-4, border-marvel-accent-blue, hover:shadow-marvel-glow-blue
+         ya que .form-container-card los maneja o son reemplazados por el estilo unificado.
+         Las clases de Tailwind para rounded y shadow pueden quedarse si te gusta ese efecto específico sobre el de CSS.
+         Por ejemplo, podrías mantener rounded-xl y shadow-2xl aquí si prefieres las sombras de Tailwind.
+         Vamos a mantenerlas por ahora para consistencia con el login.html anterior. -->
+    <!-- Para ser consistentes con el login.html anterior, mantenemos rounded-xl y shadow-2xl de Tailwind -->
+    <!-- <div class="form-container-card w-full max-w-md p-8 md:p-10 rounded-xl shadow-2xl"> -->
+
+    <div class="text-center mb-8">
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+        <!-- Estilo del título desde CSS (.form-container-card h2), tipografía desde Tailwind -->
+        Crear Cuenta
+      </h2>
+      <p class="subtitle mt-2 text-sm">
+        <!-- Clase CSS (.form-container-card p.subtitle), margen y tamaño desde Tailwind -->
+        Únete a la comunidad de MarvelApp
+      </p>
+    </div>
+
+    <form (ngSubmit)="register()" class="space-y-6">
+      <!-- Espaciado entre elementos del form con Tailwind -->
+      <div>
+        <label for="register-email" class="block text-sm font-medium mb-1.5">
+          <!-- Estilo label desde CSS, layout/font-size desde Tailwind -->
+          Email
+        </label>
+        <div class="relative">
+          <!-- Contenedor para el ícono -->
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
+          >
+            <!-- Posicionamiento e ícono con Tailwind, color de ícono también -->
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+              />
+              <path
+                d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+              />
+            </svg>
+          </div>
+          <input
+            [(ngModel)]="email"
+            name="email"
+            type="email"
+            id="register-email"
+            placeholder="tu@email.com"
+            class="w-full"
+            required
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="register-password" class="block text-sm font-medium mb-1.5">
+          Contraseña
+        </label>
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
+          >
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <input
+            [(ngModel)]="password"
+            name="password"
+            type="password"
+            id="register-password"
+            placeholder="Crea una contraseña segura"
+            class="w-full"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Opcional: Campo para confirmar contraseña si lo tienes en tu lógica -->
+      <!-- <div class="space-y-1">
+        <label for="confirm-password" class="block text-sm font-medium">Confirmar Contraseña</label>
+        <input id="confirm-password" name="confirm-password" type="password" class="w-full" required />
+      </div> -->
+
+      <div>
+        <button type="submit" class="btn-submit w-full">
+          <!-- Clase CSS: btn-submit (para colores de fondo/texto y estilos base del botón) -->
+          <!-- Tailwind: w-full (para ancho completo) -->
+          <!-- Las transiciones, transformaciones de hover/active vienen de .btn-submit en CSS -->
+          Registrarse
+        </button>
+      </div>
+    </form>
+
+    <p class="link-auth-alternative mt-10 text-center text-sm">
+      <!-- Clase CSS para el estilo del texto base, Tailwind para márgenes y alineación -->
+      ¿Ya tienes una cuenta?
+      <a routerLink="/login" class="font-medium"> Inicia sesión </a>
+    </p>
+  </div>
+</div>

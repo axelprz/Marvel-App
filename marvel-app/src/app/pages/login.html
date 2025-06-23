@@ -1,24 +1,89 @@
-<div class="max-w-sm mx-auto mt-10 p-6 bg-white shadow rounded">
-  <h2 class="text-xl font-bold mb-4">Iniciar sesión</h2>
-  <form (ngSubmit)="login()">
-    <input
-      [(ngModel)]="email"
-      name="email"
-      type="email"
-      placeholder="Email"
-      class="w-full mb-2 p-2 border rounded"
-      required
-    />
-    <input
-      [(ngModel)]="password"
-      name="password"
-      type="password"
-      placeholder="Contraseña"
-      class="w-full mb-4 p-2 border rounded"
-      required
-    />
-    <button class="bg-green-500 w-full text-white p-2 rounded">
-      Iniciar sesión
-    </button>
-  </form>
+<!-- login.html -->
+<div
+  class="flex flex-col items-center justify-center min-h-[calc(100vh-69px)] pt-10 pb-12 px-4 bg-marvel-dark"
+>
+  <div class="form-container-card w-full max-w-md p-8 md:p-10">
+    <!-- Ya no necesita 'login-card' si el borde rojo es para todos -->
+    <!-- ... (resto del contenido del formulario como en el ejemplo anterior, pero el botón principal ahora será solo 'btn-submit') ... -->
+    <form (ngSubmit)="login()" class="space-y-6">
+      <!-- ... (campos de email y password sin cambios estructurales, los estilos vienen de CSS) ... -->
+      <div>
+        <label for="login-email" class="block text-sm font-medium mb-1.5">
+          Email
+        </label>
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
+          >
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+              />
+              <path
+                d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+              />
+            </svg>
+          </div>
+          <input
+            [(ngModel)]="email"
+            name="email"
+            type="email"
+            id="login-email"
+            placeholder="tu@email.com"
+            class="w-full"
+            required
+          />
+        </div>
+      </div>
+      <div>
+        <label for="login-password" class="block text-sm font-medium mb-1.5">
+          Contraseña
+        </label>
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
+          >
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <input
+            [(ngModel)]="password"
+            name="password"
+            type="password"
+            id="login-password"
+            placeholder="••••••••"
+            class="w-full"
+            required
+          />
+        </div>
+      </div>
+      <div>
+        <button type="submit" class="btn-submit w-full">
+          <!-- Solo clase .btn-submit y w-full de Tailwind -->
+          Iniciar sesión
+        </button>
+      </div>
+    </form>
+    <p class="link-auth-alternative mt-10 text-center text-sm">
+      ¿No tienes cuenta?
+      <a routerLink="/register" class="font-medium"> Regístrate aquí </a>
+    </p>
+  </div>
 </div>

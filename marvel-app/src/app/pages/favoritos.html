@@ -1,84 +1,115 @@
-<div class="p-4">
-  <h2 class="text-2xl font-bold mb-4">Mis favoritos</h2>
+<div class="page-container favorites-page pt-6 pb-12 px-4 md:px-6 lg:px-8">
+  <h2 class="page-title">Mis Favoritos</h2>
 
-  <div *ngIf="loading">Cargando favoritos...</div>
-  <div *ngIf="!loading && favorites.length === 0">
-    No tenés personajes favoritos.
+  <div *ngIf="loading" class="text-center py-10">
+    <div class="loader"></div>
+    <p class="mt-2 text-lg">Cargando tus héroes y villanos favoritos...</p>
   </div>
 
-  <div class="mb-4 flex flex-wrap gap-4 items-center text-sm">
-    <input
-      [(ngModel)]="searchTerm"
-      name="search"
-      placeholder="Buscar personaje"
-      class="p-2 border rounded"
-      (input)="applyFilters()"
-    />
-
-    <label>
-      Ordenar por:
-      <select
-        [(ngModel)]="orderBy"
-        name="orderBy"
-        class="ml-2 p-1 border rounded"
-        (change)="applyFilters()"
+  <ng-container *ngIf="!loading">
+    <div *ngIf="favorites.length === 0" class="empty-state">
+      <svg
+        class="empty-state-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
       >
-        <option value="name">Nombre</option>
-        <option value="-name">Nombre (desc)</option>
-        <option value="modified">Modificado</option>
-        <option value="-modified">Modificado (desc)</option>
-      </select>
-    </label>
-
-    <label class="flex items-center gap-1">
-      <input
-        type="checkbox"
-        [(ngModel)]="onlyWithDescription"
-        name="onlyWithDescription"
-        (change)="applyFilters()"
-      />
-      Solo con descripción
-    </label>
-
-    <label class="flex items-center gap-1">
-      Modificado desde:
-      <input
-        type="date"
-        [(ngModel)]="modifiedSince"
-        name="modifiedSince"
-        class="p-1 border rounded"
-        (change)="applyFilters()"
-      />
-    </label>
-    <button
-      (click)="clearFilters()"
-      class="text-sm text-blue-600 underline hover:text-blue-800"
-    >
-      Limpiar filtros
-    </button>
-  </div>
-
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4" *ngIf="!loading">
-    <div *ngFor="let char of filteredFavorites" class="relative">
-      <a
-        [routerLink]="['/personaje', char.id]"
-        class="block border rounded p-2 shadow text-center hover:bg-gray-50 transition"
-      >
-        <img
-          [src]="char.thumbnail.path + '.' + char.thumbnail.extension"
-          [alt]="char.name"
-          class="w-full h-48 object-cover rounded mb-2"
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
         />
-        <h3 class="font-semibold">{{ char.name }}</h3>
-      </a>
-
-      <button
-        (click)="remove(char.id); $event.stopPropagation(); $event.preventDefault()"
-        class="absolute top-2 right-2 text-xl text-red-500 z-10"
-        [disabled]="pending.has(char.id)"
-      >
-        <span [ngClass]="{ 'animate-pulse': pending.has(char.id) }">♥</span>
-      </button>
+      </svg>
+      <p class="empty-state-title">Aún no tienes favoritos</p>
+      <p class="empty-state-description">
+        ¡Explora el universo Marvel y añade los personajes que más te gusten!
+      </p>
+      <a routerLink="/marvel" class="btn-primary mt-6">Descubrir Personajes</a>
     </div>
-  </div>
+
+    <ng-container *ngIf="favorites.length > 0">
+      <div class="search-filters-bar mb-8 p-4 rounded-lg shadow-md">
+        <div class="flex flex-col md:flex-row gap-4 items-center">
+          <input
+            [(ngModel)]="searchTerm"
+            name="search"
+            placeholder="Buscar en tus favoritos..."
+            class="search-input flex-grow"
+            (input)="applyFilters()"
+          />
+        </div>
+        <div
+          class="filters-row mt-4 flex flex-wrap gap-x-6 gap-y-3 items-center text-sm"
+        >
+          <label class="filter-label">
+            Ordenar por:
+            <select
+              [(ngModel)]="orderBy"
+              name="orderBy"
+              class="filter-select"
+              (change)="applyFilters()"
+            >
+              <option value="name">Nombre (A-Z)</option>
+              <option value="-name">Nombre (Z-A)</option>
+              <option value="modified">Modificado (Reciente)</option>
+              <option value="-modified">Modificado (Antiguo)</option>
+            </select>
+          </label>
+          <label class="filter-label checkbox-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="onlyWithDescription"
+              name="onlyWithDescription"
+              (change)="applyFilters()"
+              class="filter-checkbox"
+            />
+            Solo con descripción
+          </label>
+          <label class="filter-label">
+            Modificado desde:
+            <input
+              type="date"
+              [(ngModel)]="modifiedSince"
+              name="modifiedSince"
+              class="filter-date"
+              (change)="applyFilters()"
+            />
+          </label>
+          <button
+            (click)="clearFilters()"
+            type="button"
+            class="btn-clear-filters"
+          >
+            Limpiar filtros
+          </button>
+        </div>
+      </div>
+
+      <div class="character-grid">
+        <div *ngFor="let char of filteredFavorites" class="character-card">
+          <a [routerLink]="['/personaje', char.id]" class="character-link">
+            <div class="image-container">
+              <img
+                [src]="char.thumbnail.path + '.' + char.thumbnail.extension"
+                [alt]="char.name"
+                class="character-image"
+              />
+              <div class="image-overlay"></div>
+            </div>
+            <h3 class="character-name">{{ char.name }}</h3>
+          </a>
+          <button
+            (click)="remove(char.id); $event.stopPropagation(); $event.preventDefault()"
+            class="favorite-button remove-favorite"
+            title="Quitar de favoritos"
+            [disabled]="pending.has(char.id)"
+          >
+            <span [ngClass]="{'is-pending': pending.has(char.id)}">×</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
 </div>

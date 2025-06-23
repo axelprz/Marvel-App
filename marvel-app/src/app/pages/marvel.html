@@ -1,107 +1,122 @@
-<form (ngSubmit)="onSearch()" class="mb-4 flex gap-2">
-  <input
-    [(ngModel)]="searchTerm"
-    name="search"
-    placeholder="Buscar personaje"
-    class="p-2 border rounded w-full"
-  />
-  <button class="bg-blue-500 text-white px-4 rounded">Buscar</button>
-</form>
-
-<div class="mb-4 flex flex-wrap gap-4 items-center text-sm">
-  <label>
-    Ordenar por:
-    <select
-      [(ngModel)]="orderBy"
-      name="orderBy"
-      class="ml-2 p-1 border rounded"
-      (change)="onSearch()"
-    >
-      <option value="name">Nombre</option>
-      <option value="-name">Nombre (desc)</option>
-      <option value="modified">Modificado</option>
-      <option value="-modified">Modificado (desc)</option>
-    </select>
-  </label>
-
-  <label class="flex items-center gap-1">
-    <input
-      type="checkbox"
-      [(ngModel)]="onlyWithDescription"
-      name="onlyWithDescription"
-      (change)="onSearch()"
-    />
-    Solo con descripción
-  </label>
-
-  <label class="flex items-center gap-1">
-    Modificado desde:
-    <input
-      type="date"
-      [(ngModel)]="modifiedSince"
-      name="modifiedSince"
-      class="p-1 border rounded"
-      (change)="onSearch()"
-    />
-  </label>
-  <button
-    (click)="clearFilters()"
-    class="text-sm text-blue-600 underline hover:text-blue-800"
+<div class="home-container pt-6 pb-12 px-4 md:px-6 lg:px-8">
+  <form
+    (ngSubmit)="onSearch()"
+    class="search-filters-bar mb-8 p-4 rounded-lg shadow-md"
   >
-    Limpiar filtros
-  </button>
-</div>
-
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4" *ngIf="!loading">
-  <div *ngFor="let char of characters" class="relative">
-    <a
-      [routerLink]="['/personaje', char.id]"
-      class="block border rounded p-2 shadow text-center hover:bg-gray-50 transition"
-    >
-      <img
-        [src]="char.thumbnail.path + '.' + char.thumbnail.extension"
-        [alt]="char.name"
-        class="w-full h-48 object-cover rounded mb-2"
+    <div class="flex flex-col md:flex-row gap-4 items-center">
+      <input
+        [(ngModel)]="searchTerm"
+        name="search"
+        placeholder="Buscar personaje por nombre..."
+        class="search-input flex-grow"
       />
-      <h3 class="font-semibold">{{ char.name }}</h3>
-    </a>
+      <button type="submit" class="btn-search">Buscar</button>
+    </div>
 
-    <button
-      (click)="toggleFavorite(char); $event.stopPropagation(); $event.preventDefault()"
-      class="absolute top-2 right-2 text-xl z-10"
-      [disabled]="pending.has(char.id)"
+    <div
+      class="filters-row mt-4 flex flex-wrap gap-x-6 gap-y-3 items-center text-sm"
     >
-      <span
-        [ngClass]="{
-          'text-red-500': favorites.has(char.id),
-          'text-gray-400': !favorites.has(char.id),
-          'animate-pulse': pending.has(char.id)
-        }"
+      <label class="filter-label">
+        Ordenar por:
+        <select
+          [(ngModel)]="orderBy"
+          name="orderBy"
+          class="filter-select"
+          (change)="onSearch()"
+        >
+          <option value="name">Nombre (A-Z)</option>
+          <option value="-name">Nombre (Z-A)</option>
+          <option value="modified">Modificado (Reciente)</option>
+          <option value="-modified">Modificado (Antiguo)</option>
+        </select>
+      </label>
+      <label class="filter-label checkbox-label">
+        <input
+          type="checkbox"
+          [(ngModel)]="onlyWithDescription"
+          name="onlyWithDescription"
+          (change)="onSearch()"
+          class="filter-checkbox"
+        />
+        Solo con descripción
+      </label>
+      <label class="filter-label">
+        Modificado desde:
+        <input
+          type="date"
+          [(ngModel)]="modifiedSince"
+          name="modifiedSince"
+          class="filter-date"
+          (change)="onSearch()"
+        />
+      </label>
+      <button (click)="clearFilters()" type="button" class="btn-clear-filters">
+        Limpiar filtros
+      </button>
+    </div>
+  </form>
+
+  <div *ngIf="loading" class="text-center py-10">
+    <div class="loader"></div>
+    <p class="mt-2 text-lg">Buscando héroes y villanos...</p>
+  </div>
+
+  <div class="character-grid" *ngIf="!loading && characters.length > 0">
+    <div *ngFor="let char of characters" class="character-card">
+      <a [routerLink]="['/personaje', char.id]" class="character-link">
+        <div class="image-container">
+          <img
+            [src]="char.thumbnail.path + '.' + char.thumbnail.extension"
+            [alt]="char.name"
+            class="character-image"
+          />
+          <div class="image-overlay"></div>
+        </div>
+        <h3 class="character-name">{{ char.name }}</h3>
+      </a>
+      <button
+        (click)="toggleFavorite(char); $event.stopPropagation(); $event.preventDefault()"
+        class="favorite-button"
+        [title]="favorites.has(char.id) ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+        [disabled]="pending.has(char.id)"
       >
-        ♥
-      </span>
+        <span
+          [ngClass]="{
+            'is-favorite': favorites.has(char.id),
+            'is-pending': pending.has(char.id)
+          }"
+          >♥</span
+        >
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && characters.length === 0" class="text-center py-10">
+    <p class="text-xl text-marvel-text-secondary">
+      No se encontraron personajes con esos criterios.
+    </p>
+    <p class="mt-2 text-sm text-gray-500">
+      Intenta con otra búsqueda o ajusta los filtros.
+    </p>
+  </div>
+
+  <div class="pagination-controls mt-10" *ngIf="!loading && totalPages > 1">
+    <button
+      (click)="prevPage()"
+      [disabled]="offset === 0"
+      class="btn-pagination"
+    >
+      Anterior
+    </button>
+    <span class="pagination-info">
+      Página {{ currentPage }} de {{ totalPages }}
+    </span>
+    <button
+      (click)="nextPage()"
+      [disabled]="offset + limit >= total"
+      class="btn-pagination"
+    >
+      Siguiente
     </button>
   </div>
-</div>
-
-<div class="flex justify-between items-center mt-6 text-sm">
-  <button
-    (click)="prevPage()"
-    [disabled]="offset === 0"
-    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-  >
-    Anterior
-  </button>
-
-  <span class="text-gray-600"
-    >Página {{ currentPage }} de {{ totalPages }}</span
-  >
-
-  <button
-    (click)="nextPage()"
-    [disabled]="offset + limit >= total"
-    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-  >
-    Siguiente
-  </button>
 </div>
