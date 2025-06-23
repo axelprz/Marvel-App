@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/marvel-app",
+    "public": "dist/marvel-app/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
