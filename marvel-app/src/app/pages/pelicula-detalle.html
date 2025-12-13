@@ -1,0 +1,73 @@
+<div
+  class="page-container movie-detail-page pt-6 pb-12 px-4 md:px-6 lg:px-8"
+>
+  @if (loading) {
+    <div class="text-center py-10">
+      <div class="loader"></div>
+      <p class="mt-2 text-lg">Cargando detalles de la película...</p>
+    </div>
+  }
+
+  @if (!loading && movie) {
+    <div class="action-bar mb-6">
+      <button (click)="volver()" type="button" class="btn-secondary">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 mr-2 inline-block"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+            clip-rule="evenodd"
+          />
+        </svg>
+          Volver
+      </button>
+    </div>
+
+    <div
+      class="movie-detail-content bg-marvel-charcoal p-6 md:p-8 rounded-lg shadow-xl"
+    >
+      <div class="movie-content-grid">
+        <div class="movie-image-main-container">
+          <img
+            [src]="movieService.getPosterUrl(movie.poster_path)" 
+            [alt]="movie.title"
+            class="character-main-image"
+          />
+        </div>
+        <div class="movie-info">
+          <h1 class="character-title">{{ movie.title }}</h1>
+          
+          <div class="mt-4 info-grid">
+              <p class="info-label">Fecha de Estreno:</p>
+              <p class="info-value">{{ movie.release_date | date }}</p>
+
+              <p class="info-label">Rating promedio:</p>
+              <p class="info-value">⭐ {{ movie.vote_average | number:'1.1-1' }}</p>
+          </div>
+          
+          <div class="character-description mt-6">
+            @if (movie.overview) {
+              <p>{{ movie.overview }}</p>
+            } @else {
+              <p class="no-description-text">Sin sinopsis disponible.</p>
+            }
+          </div>
+          
+          </div>
+      </div>
+    </div>
+  }
+
+  @if (!loading && !movie) {
+    <div class="text-center py-10">
+      <p class="text-xl text-marvel-text-secondary">Película no encontrada.</p>
+      <p class="mt-2 text-sm text-gray-500">
+        Parece que esta película se ha desvanecido del catálogo...
+      </p>
+    </div>
+  }
+</div>

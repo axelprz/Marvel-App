@@ -1,0 +1,154 @@
+<div class="home-container pt-6 pb-12 px-4 md:px-6 lg:px-8">
+  <form
+    (ngSubmit)="onSearch()"
+    class="search-filters-bar mb-8 p-4 rounded-lg shadow-md"
+  >
+    <div class="flex flex-col md:flex-row gap-4 items-center">
+      <input
+        [(ngModel)]="searchTerm"
+        name="search"
+        placeholder="Buscar película o serie por nombre..."
+        class="search-input flex-grow"
+      />
+      <button type="submit" class="btn-search">BUSCAR</button>
+    </div>
+
+    <div class="filters-row mt-4 flex flex-wrap gap-x-6 gap-y-3 items-center text-sm">
+      
+      <label class="filter-label">
+        Categoría:
+        <select
+          [(ngModel)]="selectedGenreId"
+          name="selectedGenreId"
+          class="filter-select"
+          (change)="onSearch()"
+        >
+          <option [ngValue]="null">Todas</option>
+          @for (genre of genres; track genre.id) {
+            <option [ngValue]="genre.id">{{ genre.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="filter-label">
+        Ordenar por:
+        <select
+          [(ngModel)]="orderBy"
+          name="orderBy"
+          class="filter-select"
+          (change)="onSearch()"
+        >
+          <option value="popularity.desc">Popularidad (Desc)</option> 
+          <option value="popularity.asc">Popularidad (Asc)</option>
+          <option value="vote_average.desc">Rating (Mayor)</option>
+          <option value="vote_average.asc">Rating (Menor)</option>
+          <option value="release_date.desc">Estreno (Reciente)</option>
+          <option value="release_date.asc">Estreno (Antiguo)</option>
+        </select>
+      </label>
+      
+      <label class="filter-label checkbox-label">
+        <input
+          type="checkbox"
+          [(ngModel)]="onlyWithPopular"
+          name="onlyWithPopular"
+          (change)="onSearch()"
+          class="filter-checkbox"
+        />
+        Solo con alta popularidad
+      </label>
+        
+      <label class="filter-label">
+        Año:
+        <input
+          type="number"
+          min="1900"
+          max="2030"
+          [(ngModel)]="releaseYear"
+          name="releaseYear"
+          class="filter-date"
+          (change)="onSearch()"
+          placeholder="Ej: 2024"
+          style="width: 80px;" 
+        />
+      </label>
+
+      <button (click)="clearFilters()" type="button" class="btn-clear-filters">
+        Limpiar filtros
+      </button>
+    </div>
+  </form>
+
+  @if (loading) {
+    <div class="text-center py-10">
+      <div class="loader"></div>
+      <p class="mt-2 text-lg text-gray-400">Cargando películas...</p>
+    </div>
+  }
+
+  @if (!loading && movies.length > 0) {
+    <div class="character-grid">
+      @for (movie of movies; track movie.id) {
+        <div class="character-card">
+          <a [routerLink]="['/pelicula', movie.id]" class="character-link">
+            <div class="image-container">
+              <img
+                [src]="movieService.getPosterUrl(movie.poster_path)" 
+                [alt]="movie.title"
+                class="character-image"
+              />
+              <div class="image-overlay"></div>
+            </div>
+            <h3 class="character-name">{{ movie.title }}</h3>
+          </a>
+          <button
+            (click)="toggleFavorite(movie); $event.stopPropagation(); $event.preventDefault()"
+            class="favorite-button"
+            [title]="favorites.has(movie.id) ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+            [disabled]="pending.has(movie.id)"
+          >
+            <span
+              [ngClass]="{
+                'is-favorite': favorites.has(movie.id),
+                'is-pending': pending.has(movie.id)
+              }"
+            >♥</span>
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!loading && movies.length === 0) {
+    <div class="text-center py-10">
+      <p class="text-xl text-gray-400">
+        No se encontraron películas con esos criterios.
+      </p>
+      <p class="mt-2 text-sm text-gray-500">
+        Intenta ajustar los filtros o buscar otro título.
+      </p>
+    </div>
+  }
+
+  @if (!loading && totalPages > 1) {
+    <div class="pagination-controls mt-10">
+      <button
+        (click)="prevPage()"
+        [disabled]="currentPage === 1"
+        class="btn-pagination"
+      >
+        Anterior
+      </button>
+      <span class="pagination-info">
+        Página {{ currentPage }} de {{ totalPages }}
+      </span>
+      <button
+        (click)="nextPage()"
+        [disabled]="currentPage >= totalPages"
+        class="btn-pagination"
+      >
+        Siguiente
+      </button>
+    </div>
+  }
+</div>

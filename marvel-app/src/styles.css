@@ -1,412 +1,445 @@
+/* ==========================================================================
+   1. CONFIGURACIÓN BASE E IMPORTACIONES
+   ========================================================================== */
 @import "tailwindcss";
+
+/* Fuente opcional: Si quieres usar una fuente web, impórtala aquí. 
+   Por defecto usaremos una pila de fuentes del sistema muy limpia. */
+
+:root {
+  /* Paleta de Colores - Temática Cine/Dark */
+  --primary-red: #E50914;       /* Rojo tipo Netflix/Marvel */
+  --primary-red-hover: #b20710; /* Rojo más oscuro para hovers */
+  --primary-red-light: #ff4d4d; /* Rojo brillante para textos/links */
+  
+  --bg-dark: #141414;           /* Fondo principal muy oscuro */
+  --bg-card: #1f1f1f;           /* Fondo de tarjetas/paneles */
+  --bg-input: #333333;          /* Fondo de inputs */
+  
+  --text-main: #e5e5e5;         /* Blanco hueso para lectura cómoda */
+  --text-muted: #a3a3a3;        /* Gris para textos secundarios */
+  
+  --border-color: #404040;      /* Bordes sutiles */
+  
+  /* Sombras */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-neon: 0 0 15px rgba(229, 9, 20, 0.4); /* Resplandor rojo */
+}
+
+/* ==========================================================================
+   2. ESTILOS GLOBALES Y ANIMACIONES
+   ========================================================================== */
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased; /* Texto más nítido */
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Entrada triunfal del formulario (Slide Up + Fade In) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Efecto de pulso suave para el botón */
+@keyframes softPulse {
+  0% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(229, 9, 20, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0); }
+}
+
+
+/* Animación de entrada suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animación Toast */
 @keyframes fade-in-out {
-  0% { opacity: 0; transform: translateY(-10px); }
+  0% { opacity: 0; transform: translateY(-20px); }
   10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(-10px); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 .animate-fade-in-out {
   animation: fade-in-out 3s ease-in-out forwards;
 }
 
-/* src/styles.css o src/styles.scss */
-/* ... (mantén @import "tailwindcss"; o las directivas @tailwind) ... */
-
-:root {
-  --marvel-red: #ED1D24;
-  --marvel-red-darker: #c5121a; /* Para hovers o estados activos */
-  --marvel-red-light: #ff5252;  /* Un rojo más brillante para acentos si es necesario */
-  --marvel-dark: #151515;
-  --marvel-charcoal: #202020;
-  --marvel-light-gray: #EAEAEA;
-  --marvel-medium-gray: #393939;
-  --marvel-border-gray: #4A4A4A;
-  --marvel-text-secondary: #a0aec0; /* Tailwind gray-500, para texto secundario */
-}
-
-body {
-  background-color: var(--marvel-dark);
-  color: var(--marvel-light-gray);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente un poco más estilizada */
-}
-
-/* --- ESTILOS PERSONALIZADOS PARA COMPONENTES --- */
-
-/* --- Barra de Navegación --- */
-nav.app-navbar {
-  background-color: var(--marvel-charcoal);
-  color: var(--marvel-light-gray);
-  border-bottom: 3px solid var(--marvel-red); /* Borde más grueso */
-  padding-top: 0.75rem; /* Tailwind: py-3 */
-  padding-bottom: 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
-}
-
-nav.app-navbar .logo {
-  color: var(--marvel-red) !important;
-  font-size: 1.75rem; /* Tailwind: text-2xl o text-3xl */
-  font-weight: 700; /* Tailwind: font-bold */
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-nav.app-navbar .logo:hover {
-  color: white !important;
-  transform: scale(1.05);
-}
-
-nav.app-navbar .nav-link {
-  padding: 0.5rem 1rem; /* Más padding */
-  border-radius: 4px; /* Tailwind: rounded-md */
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-nav.app-navbar .nav-link:hover {
-  background-color: var(--marvel-red);
-  color: white;
-  transform: translateY(-2px);
-}
-
-nav.app-navbar .btn-action { /* Clase genérica para botones Login/Registro en nav */
-  padding: 0.6rem 1.2rem;
-  border-radius: 4px;
-  font-weight: 500; /* Tailwind: font-medium */
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-nav.app-navbar .btn-action.btn-login-nav:hover { /* Botón Login sin fondo */
-  color: var(--marvel-red);
-  transform: scale(1.05);
-}
-nav.app-navbar .btn-action.btn-register-nav { /* Botón Registro con fondo */
-  background-color: var(--marvel-red);
-  color: white;
-  border: 1px solid var(--marvel-red);
-}
-nav.app-navbar .btn-action.btn-register-nav:hover {
-  background-color: var(--marvel-red-darker);
-  border-color: var(--marvel-red-darker);
-  transform: scale(1.05);
-  box-shadow: 0 0 10px var(--marvel-red);
-}
-
-/* Menú desplegable "Cuenta" */
-nav.app-navbar .account-menu-button {
-  background-color: transparent; /* Fondo transparente por defecto */
-  border: 1px solid var(--marvel-medium-gray);
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
-}
-nav.app-navbar .account-menu-button:hover {
-  background-color: var(--marvel-medium-gray);
-  border-color: var(--marvel-red);
-  transform: scale(1.02);
-}
-
-nav.app-navbar .dropdown-panel {
-  background-color: var(--marvel-charcoal);
-  border: 1px solid var(--marvel-red);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-}
-nav.app-navbar .dropdown-panel .dropdown-item:hover {
-  background-color: var(--marvel-red);
-  color: white;
-}
-nav.app-navbar .dropdown-panel .logout-button {
-  color: var(--marvel-red-light); /* Un rojo un poco más claro para el logout */
-}
-nav.app-navbar .dropdown-panel .logout-button:hover {
-  background-color: var(--marvel-red);
-  color: white;
-}
-
-
-/* --- Formularios --- */
-.form-container-card {
-  background-color: var(--marvel-charcoal);
-  border-radius: 0.75rem; /* Tailwind: rounded-xl */
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3), 0 0 0 1px var(--marvel-border-gray); /* Sombra y un borde sutil */
-}
-
-/* El borde superior rojo se aplicará a AMBOS formularios ahora */
-.form-container-card {
-  border-top: 4px solid var(--marvel-red);
-}
-
-.form-container-card h2 {
-  color: var(--marvel-light-gray);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.form-container-card p.subtitle {
-  color: var(--marvel-text-secondary);
-}
-
-.form-container-card label {
-  color: var(--marvel-light-gray);
-  font-weight: 500; /* Tailwind: font-medium */
-}
-
-.form-container-card input[type="email"],
-.form-container-card input[type="password"] {
-  background-color: var(--marvel-medium-gray);
-  border: 1px solid var(--marvel-border-gray);
-  color: var(--marvel-light-gray);
-  border-radius: 0.375rem; /* Tailwind: rounded-md */
-  padding: 0.75rem 1rem; /* Tailwind: p-3 o p-4 */
-  padding-left: 2.75rem; /* Tailwind: pl-11 (para el ícono) */
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.form-container-card input[type="email"]::placeholder,
-.form-container-card input[type="password"]::placeholder {
-  color: var(--marvel-text-secondary);
-}
-
-.form-container-card input:focus {
-  border-color: var(--marvel-red);
-  box-shadow: 0 0 0 3px rgba(237, 29, 36, 0.25); /* Sombra de foco roja, como un ring */
-  outline: none; /* Quitar el outline por defecto */
-}
-
-.form-container-card .btn-submit { /* Botón de submit principal del formulario */
-  background-color: var(--marvel-red);
-  color: white;
-  padding: 0.75rem 1rem; /* Tailwind p-3/p-4 */
-  border-radius: 0.375rem; /* Tailwind rounded-md */
-  font-weight: 600; /* Tailwind font-semibold */
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  border: none;
-}
-.form-container-card .btn-submit:hover {
-  background-color: var(--marvel-red-darker);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 4px 15px rgba(237, 29, 36, 0.3);
-}
-.form-container-card .btn-submit:active {
-  transform: translateY(0px) scale(0.98);
-}
-
-
-.form-container-card .link-auth-alternative {
-  color: var(--marvel-text-secondary);
-}
-.form-container-card .link-auth-alternative a {
-  color: var(--marvel-red-light); /* Rojo más claro para destacar */
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.3s ease, text-decoration 0.3s ease;
-}
-.form-container-card .link-auth-alternative a:hover {
-  color: white;
-  text-decoration: underline;
-}
-
-/* Animación para el toast (si la quieres diferente) */
-.toast-notification { /* Añade esta clase a tu toast */
-  background-color: var(--marvel-red); /* O un verde si es de éxito */
-  /* ...otros estilos para el toast ... */
-}
-
-nav.app-navbar .btn-action {
-  /* ... (otros estilos de btn-action) ... */
-  cursor: pointer; /* Añade cursor pointer a los botones del nav */
-}
-
-/* ... (resto de estilos del nav) ... */
-nav.app-navbar .account-menu-button {
-  /* ... (otros estilos del account-menu-button) ... */
-  cursor: pointer;
-}
-
-nav.app-navbar .dropdown-panel .dropdown-item,
-nav.app-navbar .dropdown-panel .logout-button {
-  cursor: pointer;
-}
-
-
-/* --- Formularios --- */
-/* ... (estilos de .form-container-card, h2, p.subtitle, label, inputs como los teníamos) ... */
-
-.form-container-card .btn-submit {
-  /* ... (background-color, color, padding, etc. como los teníamos) ... */
-  cursor: pointer; /* <<-- AÑADIR ESTO */
-  /* La transición y transform ya están definidos para el hover */
-}
-.form-container-card .btn-submit:hover {
-  background-color: var(--marvel-red-darker);
-  transform: translateY(-2px) scale(1.03); /* Ajusta la escala si quieres más o menos */
-  box-shadow: 0 5px 15px rgba(237, 29, 36, 0.4); /* Sombra más pronunciada en hover */
-}
-.form-container-card .btn-submit:active {
-  transform: translateY(0px) scale(0.97); /* Efecto de presión un poco más notorio */
-  box-shadow: 0 2px 8px rgba(237, 29, 36, 0.3);
-}
-
-.form-container-card .link-auth-alternative a {
-  /* ... (color, font-weight, text-decoration como los teníamos) ... */
-  cursor: pointer; /* <<-- AÑADIR ESTO */
-  transition: color 0.2s ease, text-decoration 0.2s ease; /* Transición más rápida */
-}
-.form-container-card .link-auth-alternative a:hover {
-  color: white; /* O un rojo más brillante var(--marvel-red-light) */
-  text-decoration: underline;
-}
-
-.home-container {
-  position: relative;
-  /* El fondo se manejará con un pseudo-elemento para el degradado + partículas */
-}
-
-/* Fondo con degradado radial y patrón de puntos (partículas) */
-.home-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--marvel-dark); /* Color base */
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(237, 29, 36, 0.15) 0%, transparent 25%), /* Aura roja sutil 1*/
-    radial-gradient(circle at 80% 30%, rgba(74, 74, 74, 0.2) 0%, transparent 30%),   /* Aura gris oscura sutil 2*/
-    radial-gradient(circle at 50% 70%, rgba(237, 29, 36, 0.1) 0%, transparent 20%),  /* Aura roja sutil 3*/
-    radial-gradient(var(--marvel-medium-gray) 1px, transparent 1px); /* Patrón de puntos */
-  background-size: 100% 100%, 100% 100%, 100% 100%, 8px 8px; /* Tamaño para cada capa de fondo */
-  z-index: -1; /* Detrás del contenido del home-container */
-  opacity: 0.7; /* Para que no sea demasiado abrumador */
-}
-
-
-/* Barra de Búsqueda y Filtros */
-.search-filters-bar {
-  background-color: rgba(32, 32, 32, 0.8); /* var(--marvel-charcoal) con opacidad */
-  backdrop-filter: blur(5px); /* Efecto glassmorphism sutil */
-  border: 1px solid var(--marvel-border-gray);
-}
-
-.search-input {
-  background-color: var(--marvel-medium-gray);
-  color: var(--marvel-light-gray);
-  border: 1px solid var(--marvel-border-gray);
-  padding: 0.75rem 1rem;
-  border-radius: 0.375rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.search-input::placeholder {
-  color: var(--marvel-text-secondary);
-}
-.search-input:focus {
-  outline: none;
-  border-color: var(--marvel-red);
-  box-shadow: 0 0 0 3px rgba(237, 29, 36, 0.25);
-}
-
-.btn-search {
-  background-color: var(--marvel-red);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-.btn-search:hover {
-  background-color: var(--marvel-red-darker);
-  transform: scale(1.03);
-}
-
-.filters-row {
-  border-top: 1px solid var(--marvel-border-gray);
-  padding-top: 1rem;
-}
-.filter-label {
-  color: var(--marvel-light-gray);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.filter-select,
-.filter-date {
-  background-color: var(--marvel-medium-gray);
-  color: var(--marvel-light-gray);
-  border: 1px solid var(--marvel-border-gray);
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.25rem;
-  margin-left: 0.25rem;
-}
-.filter-select:focus,
-.filter-date:focus {
-  outline: none;
-  border-color: var(--marvel-red);
-  box-shadow: 0 0 0 2px rgba(237, 29, 36, 0.2);
-}
-.filter-checkbox {
-  width: 1rem;
-  height: 1rem;
-  accent-color: var(--marvel-red); /* Color del check */
-}
-
-.btn-clear-filters {
-  color: var(--marvel-red-light);
-  text-decoration: underline;
-  font-size: 0.875rem; /* text-sm */
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-.btn-clear-filters:hover {
-  color: white;
-}
-
-/* Loader animado */
+/* Loader Giratorio */
 .loader {
-  border: 4px solid var(--marvel-medium-gray);
-  border-top: 4px solid var(--marvel-red);
+  border: 4px solid var(--bg-input);
+  border-top: 4px solid var(--primary-red);
   border-radius: 50%;
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;
   margin: 0 auto;
 }
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ==========================================================================
+   3. BARRA DE NAVEGACIÓN
+   ========================================================================== */
+
+nav.app-navbar {
+  background-color: rgba(20, 20, 20, 0.95); /* Casi sólido con toque de transparencia */
+  backdrop-filter: blur(10px); /* Efecto cristal */
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 0;
+  box-shadow: var(--shadow-lg);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: all 0.3s ease;
 }
 
-/* Grid de Personajes */
+nav.app-navbar .logo {
+  color: var(--primary-red) !important;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-decoration: none;
+  transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+nav.app-navbar .logo:hover {
+  transform: scale(1.05);
+  text-shadow: var(--shadow-neon);
+}
+
+nav.app-navbar .nav-link {
+  color: var(--text-main);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-decoration: none;
+}
+nav.app-navbar .nav-link:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Botones del Nav */
+nav.app-navbar .btn-action {
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+nav.app-navbar .btn-login-nav {
+  color: var(--text-main);
+}
+nav.app-navbar .btn-login-nav:hover {
+  color: white;
+}
+
+nav.app-navbar .btn-register-nav {
+  background-color: var(--primary-red);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+nav.app-navbar .btn-register-nav:hover {
+  background-color: var(--primary-red-hover);
+  transform: translateY(-1px);
+}
+
+/* Dropdown de Cuenta */
+nav.app-navbar .account-menu-button {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+nav.app-navbar .account-menu-button:hover {
+  border-color: var(--text-main);
+}
+
+nav.app-navbar .dropdown-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+}
+nav.app-navbar .dropdown-panel .dropdown-item,
+nav.app-navbar .dropdown-panel .logout-button {
+  color: var(--text-main);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+nav.app-navbar .dropdown-panel .dropdown-item:hover,
+nav.app-navbar .dropdown-panel .logout-button:hover {
+  background-color: var(--bg-input);
+}
+nav.app-navbar .dropdown-panel .logout-button {
+  color: var(--primary-red-light);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   4. FORMULARIOS (Login/Registro/Búsqueda)
+   ========================================================================== */
+
+/* Fondo específico para páginas de Auth */
+.auth-page-background {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 69px); /* Ajuste para el navbar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  /* --- FONDO CINEMÁTICO ANIMADO --- */
+  /* Mezcla de negro, gris muy oscuro y un rojo profundo sutil */
+  background: linear-gradient(-45deg, #000000, #1a1a1a, #2b0808, #0d0d0d);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+}
+.auth-page-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(#ffffff 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.03; /* Muy sutil */
+  pointer-events: none;
+  z-index: 1;
+}
+
+.form-container-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 450px; /* Un poco más ancho */
+  padding: 3rem;
+  
+  /* Efecto Cristal */
+  background-color: rgba(20, 20, 20, 0.75); /* Fondo oscuro semitransparente */
+  backdrop-filter: blur(15px); /* Desenfoque del fondo detrás de la tarjeta */
+  -webkit-backdrop-filter: blur(15px); /* Safari support */
+  
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  border-top: 4px solid var(--primary-red); /* Acento de marca arriba */
+  border-radius: 12px;
+  
+  /* Sombra profunda para separarlo del fondo */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+
+  /* ANIMACIÓN DE ENTRADA */
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.form-container-card h2 {
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.form-container-card .subtitle {
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+/* Inputs mejorados */
+.form-container-card input {
+  background-color: rgba(0, 0, 0, 0.3); /* Inputs más oscuros */
+  border: 1px solid #333;
+  transition: all 0.3s ease;
+}
+.form-container-card input:focus {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-color: var(--primary-red);
+  transform: scale(1.01); /* Pequeño zoom al escribir */
+}
+
+/* Botón de Login con animación */
+.form-container-card .btn-submit {
+  width: 100%;
+  margin-top: 1rem;
+  font-size: 1rem;
+  padding: 1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.form-container-card .btn-submit:hover {
+  animation: softPulse 1.5s infinite;
+}
+
+.link-auth-alternative {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #888;
+}
+.link-auth-alternative a {
+  color: white;
+  margin-left: 5px;
+  position: relative;
+  text-decoration: none;
+}
+/* Subrayado animado en el link */
+.link-auth-alternative a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--primary-red);
+  transition: width 0.3s ease;
+}
+.link-auth-alternative a:hover::after {
+  width: 100%;
+}
+
+/* Inputs Generales */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select,
+.search-input {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: white;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+input:focus, select:focus, .search-input:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.2);
+  background-color: #404040;
+}
+
+/* Botones Principales */
+.btn-submit, .btn-search, .btn-primary {
+  background-color: var(--primary-red);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-submit:hover, .btn-search:hover, .btn-primary:hover {
+  background-color: var(--primary-red-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
+}
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+/* Barra de Filtros en Home/Favoritos */
+.search-filters-bar {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.filters-row {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.filter-label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.btn-clear-filters {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+.btn-clear-filters:hover {
+  color: var(--primary-red-light);
+}
+
+/* ==========================================================================
+   5. GRID DE PELÍCULAS (Cards)
+   ========================================================================== */
+
 .character-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Responsivo */
-  gap: 1.5rem; /* Tailwind: gap-6 */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem;
+  padding-bottom: 2rem;
 }
 
 .character-card {
-  background-color: var(--marvel-charcoal);
-  border-radius: 0.5rem; /* Tailwind: rounded-lg */
+  background-color: var(--bg-card);
+  border-radius: 8px;
   overflow: hidden;
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid var(--marvel-border-gray);
+  border: 1px solid transparent;
+  animation: fadeIn 0.5s ease-out;
 }
+
 .character-card:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 15px var(--marvel-red);
+  transform: scale(1.03);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-color);
+  z-index: 10;
 }
 
-.character-link {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-}
-
-.character-card .image-container {
+.image-container {
   position: relative;
   width: 100%;
-  padding-top: 125%; /* Relación de aspecto 4:5 para la imagen (altura = 125% del ancho) */
-  /* Si prefieres imágenes cuadradas, usa padding-top: 100%; */
-  /* Si la altura es fija como h-48, necesitarás object-fit en la imagen */
+  padding-top: 150%; /* Aspect Ratio 2:3 (Estándar de pósters de cine) */
   overflow: hidden;
 }
 
@@ -416,407 +449,215 @@ nav.app-navbar .dropdown-panel .logout-button {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Asegura que la imagen cubra sin distorsionarse */
+  object-fit: cover;
   transition: transform 0.4s ease;
 }
-.character-card:hover .character-image {
-  transform: scale(1.1);
-}
 
-.image-overlay { /* Opcional: para un gradiente sutil sobre la imagen */
+/* Overlay oscuro suave en la parte inferior de la imagen */
+.image-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 50%;
-  background: linear-gradient(to top, rgba(21, 21, 21, 0.8) 0%, transparent 100%); /* var(--marvel-dark) con opacidad */
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.character-card:hover .image-overlay {
-  opacity: 1;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+  opacity: 0.8;
 }
 
 .character-name {
-  font-weight: 600; /* Tailwind: font-semibold */
-  padding: 0.75rem; /* Tailwind: p-3 */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
   text-align: center;
-  color: var(--marvel-light-gray);
-  position: relative; /* Para que esté sobre el overlay si se solapa */
-  background-color: var(--marvel-charcoal); /* Asegura que el nombre sea legible */
-  min-height: 60px; /* Para alinear nombres de diferentes longitudes */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  background: transparent; /* Quitamos fondo sólido para ver el overlay */
 }
 
+/* Botón Favorito (Corazón) */
 .favorite-button {
   position: absolute;
-  top: 0.75rem; /* Tailwind: top-3 */
-  right: 0.75rem; /* Tailwind: right-3 */
-  z-index: 10;
-  background: rgba(32, 32, 32, 0.7); /* var(--marvel-charcoal) con opacidad */
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: none;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: all 0.2s;
+  z-index: 20;
 }
 .favorite-button:hover {
-  transform: scale(1.15);
-  background: var(--marvel-red);
+  background-color: white;
+  transform: scale(1.1);
+}
+.favorite-button span {
+  font-size: 1.5rem;
+  color: rgba(255,255,255,0.7);
+  transition: color 0.2s;
+  line-height: 0; /* Centrado vertical perfecto */
+  padding-top: 2px;
 }
 .favorite-button:hover span {
-  color: white !important; /* Forzar blanco en hover del botón */
-}
-
-.favorite-button span {
-  font-size: 1.25rem; /* text-xl */
-  line-height: 1;
-  transition: color 0.3s ease;
+  color: var(--primary-red);
 }
 .favorite-button span.is-favorite {
-  color: var(--marvel-red);
-}
-.favorite-button span:not(.is-favorite) {
-  color: var(--marvel-light-gray); /* Corazón no favorito */
-}
-.favorite-button span.is-pending {
-  animation: pulse-fav 1s infinite;
-  color: var(--marvel-medium-gray);
-}
-@keyframes pulse-fav {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  color: var(--primary-red);
 }
 
-/* Paginación */
-.pagination-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--marvel-text-secondary);
+/* Botón Eliminar (Página Favoritos) */
+.remove-favorite:hover {
+  background-color: var(--primary-red);
+}
+.remove-favorite:hover span {
+  color: white !important;
 }
 
-.btn-pagination {
-  background-color: var(--marvel-medium-gray);
-  color: var(--marvel-light-gray);
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  border: 1px solid var(--marvel-border-gray);
-  cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
-}
-.btn-pagination:hover:not(:disabled) {
-  background-color: var(--marvel-red);
-  border-color: var(--marvel-red);
-  color: white;
-  transform: scale(1.03);
-}
-.btn-pagination:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination-info {
-  font-size: 0.875rem; /* text-sm */
-}
+/* ==========================================================================
+   6. PÁGINA DE DETALLE
+   ========================================================================== */
 
 .page-container {
-  position: relative; /* Para el pseudo-elemento de fondo si es necesario */
-}
-/* Si la página de favoritos está dentro del .home-container, ya tendrá el fondo.
-   Si no, y quieres el mismo fondo, puedes añadir el ::before a .page-container: */
-/*
-.page-container::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: var(--marvel-dark);
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(237, 29, 36, 0.15) 0%, transparent 25%),
-    radial-gradient(circle at 80% 30%, rgba(74, 74, 74, 0.2) 0%, transparent 30%),
-    radial-gradient(circle at 50% 70%, rgba(237, 29, 36, 0.1) 0%, transparent 20%),
-    radial-gradient(var(--marvel-medium-gray) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 8px 8px;
-  z-index: -1;
-  opacity: 0.7;
-}
-*/
-
-.page-title {
-  color: var(--marvel-light-gray);
-  font-size: 2.25rem; /* Tailwind: text-4xl */
-  font-weight: 700; /* Tailwind: font-bold */
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-align: center;
-  margin-bottom: 2rem; /* Tailwind: mb-8 */
-  padding-bottom: 0.5rem; /* Tailwind: pb-2 */
-  border-bottom: 2px solid var(--marvel-red);
-  display: inline-block; /* Para que el borde solo ocupe el ancho del texto */
-  position: relative; /* Para centrar con transform si es necesario, o usar text-align en el padre */
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-
-/* --- Página de Favoritos Específicos --- */
-.favorites-page .search-filters-bar {
-  /* Los estilos de .search-filters-bar, .search-input, etc., del home se reutilizan */
-}
-
-.favorites-page .character-grid {
-  /* Los estilos de .character-grid y .character-card del home se reutilizan */
-}
-
-/* Botón de quitar de favoritos */
-.favorites-page .favorite-button.remove-favorite {
-  /* Hereda estilos de .favorite-button (posición, tamaño, fondo base) */
-  background: rgba(237, 29, 36, 0.7); /* Fondo rojo semitransparente por defecto */
-}
-.favorites-page .favorite-button.remove-favorite span {
-  color: white; /* El ícono (cruz o corazón) siempre blanco aquí */
-  font-size: 1.5rem; /* Más grande para la '×' */
-  font-weight: bold;
-  line-height: 0.8; /* Ajuste para centrar la '×' */
-}
-.favorites-page .favorite-button.remove-favorite:hover {
-  background: var(--marvel-red-darker); /* Rojo más oscuro sólido en hover */
-  transform: scale(1.15) rotate(90deg); /* Animación de rotación al quitar */
-}
-.favorites-page .favorite-button.remove-favorite span.is-pending {
-  /* La animación de pulse-fav ya está definida, se aplicará */
-  color: var(--marvel-light-gray);
-}
-
-
-/* Estado Vacío (cuando no hay favoritos) */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 3rem 1rem; /* Tailwind: p-12 o similar */
-  margin-top: 2rem; /* Tailwind: mt-8 */
-  color: var(--marvel-text-secondary);
-  border: 2px dashed var(--marvel-border-gray);
-  border-radius: 0.5rem; /* Tailwind: rounded-lg */
-  background-color: rgba(32, 32, 32, 0.3); /* var(--marvel-charcoal) con opacidad */
-}
-.empty-state-icon {
-  width: 4rem; /* Tailwind: w-16 */
-  height: 4rem; /* Tailwind: h-16 */
-  stroke: var(--marvel-red); /* Color del ícono */
-  margin-bottom: 1rem; /* Tailwind: mb-4 */
-}
-.empty-state-title {
-  font-size: 1.5rem; /* Tailwind: text-2xl */
-  font-weight: 600; /* Tailwind: font-semibold */
-  color: var(--marvel-light-gray);
-  margin-bottom: 0.5rem; /* Tailwind: mb-2 */
-}
-.empty-state-description {
-  font-size: 1rem; /* Tailwind: text-base */
-  max-width: 400px; /* Para que no sea demasiado ancho */
-  line-height: 1.6;
-}
-.btn-primary { /* Botón reutilizable para acciones primarias */
-  background-color: var(--marvel-red);
-  color: white;
-  padding: 0.6rem 1.5rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  text-decoration: none; /* Para el <a> */
-  display: inline-block; /* Para el <a> */
-}
-.btn-primary:hover {
-  background-color: var(--marvel-red-darker);
-  transform: scale(1.03);
-}
-
-.page-container {
-  position: relative;
-}
-/* Si esta página está dentro de un layout con el fondo de .home-container, no necesitas el ::before aquí.
-   Si no, y quieres el mismo fondo, puedes añadir el ::before a .page-container (ver mensaje anterior). */
-
-/* Loader (ya deberías tenerlo del home) */
-.loader {
-  border: 4px solid var(--marvel-medium-gray);
-  border-top: 4px solid var(--marvel-red);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
+  max-width: 1200px;
   margin: 0 auto;
 }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* --- Página de Detalle de Personaje --- */
-.character-detail-page .action-bar { /* Para el botón Volver */
-  /* mb-6 ya está en el HTML */
+.movie-detail-content {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
 }
 
-.btn-secondary { /* Estilo para el botón "Volver" */
-  background-color: var(--marvel-medium-gray);
-  color: var(--marvel-light-gray);
+.movie-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .movie-content-grid {
+    grid-template-columns: 350px 1fr;
+    align-items: start;
+  }
+}
+
+.movie-image-main-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.character-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: white;
+  line-height: 1.1;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1.5rem;
+  margin: 1.5rem 0;
+  background: rgba(255,255,255,0.05);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-red);
+}
+
+.info-label {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.info-value {
+  color: white;
+}
+
+.character-description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #d1d5db;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
   padding: 0.6rem 1.2rem;
-  border-radius: 0.375rem; /* rounded-md */
-  font-weight: 500; /* font-medium */
-  border: 1px solid var(--marvel-border-gray);
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
-  text-decoration: none;
+  transition: all 0.2s;
   display: inline-flex;
   align-items: center;
 }
 .btn-secondary:hover {
-  background-color: var(--marvel-border-gray);
-  border-color: var(--marvel-medium-gray);
-  transform: scale(1.03);
+  border-color: white;
+  color: white;
+  background-color: rgba(255,255,255,0.05);
 }
 
-.character-detail-content { /* Nuevo contenedor para dar fondo y padding al contenido principal */
-  background-color: var(--marvel-charcoal); /* Fondo oscuro para el contenido */
-  padding: 1.5rem; /* p-6 */
-  border-radius: 0.5rem; /* rounded-lg */
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4); /* Sombra más pronunciada */
-  border: 1px solid var(--marvel-border-gray);
+/* ==========================================================================
+   7. PAGINACIÓN Y EXTRAS
+   ========================================================================== */
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 3rem;
 }
 
-/* Estructura de grid para imagen e info */
-.character-content-grid {
-  display: grid;
-  grid-template-columns: 1fr; /* Stack en móvil */
-  gap: 1.5rem; /* Tailwind: gap-6, ajusta si es necesario */
-  align-items: flex-start;
+.btn-pagination {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-@media (min-width: 768px) { /* Tailwind: md: */
-  .character-content-grid {
-    grid-template-columns: 250px 1fr; /* Imagen a la izquierda, info a la derecha */
-    gap: 2rem; /* Tailwind: gap-8 */
-  }
-}
-@media (min-width: 1024px) { /* Tailwind: lg: */
-  .character-content-grid {
-    grid-template-columns: 300px 1fr; /* Imagen un poco más grande en pantallas grandes */
-  }
+.btn-pagination:hover:not(:disabled) {
+  border-color: var(--primary-red);
+  color: var(--primary-red);
 }
 
-.character-image-main-container {
-  width: 100%;
-  border-radius: 0.375rem; /* rounded-md */
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Sombra más sutil para la imagen */
-  border: 1px solid var(--marvel-border-gray);
-}
-.character-main-image {
-  display: block;
-  width: 100%;
-  height: auto;
+.btn-pagination:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
-.character-info {
-  /* No necesita estilos específicos de fondo si .character-detail-content ya lo tiene */
+/* Estado Vacío */
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  stroke: var(--text-muted);
+  margin-bottom: 1rem;
 }
 
-.character-title {
-  color: var(--marvel-red);
-  font-size: 2rem; /* Tailwind: text-3xl */
-  font-weight: 700; /* font-bold */
-  line-height: 1.2;
-  margin-bottom: 0.75rem; /* mb-3 */
-}
-
-.character-description {
-  color: var(--marvel-light-gray);
-  line-height: 1.6;
-  font-size: 0.95rem; /* Ligeramente más pequeño que base */
-}
-.character-description p {
-  margin-bottom: 0.75rem;
-}
-.no-description-text { /* Heredado de tu HTML original, ajustamos color */
-  font-style: italic;
-  color: var(--marvel-text-secondary); /* Usa la variable de color */
-  padding: 0.5rem 0;
-}
-
-.character-section {
-  /* mt-6 ya está en el HTML */
-}
-
-.section-title { /* Para "Cómics:" */
-  font-size: 1.25rem; /* text-xl */
-  font-weight: 600; /* font-semibold */
-  color: var(--marvel-light-gray);
-  margin-bottom: 0.75rem; /* mb-3 */
-  padding-bottom: 0.375rem; /* pb-1.5 */
-  border-bottom: 1px solid var(--marvel-medium-gray);
-}
-
-.info-list { /* Para la lista de cómics */
-  list-style-type: none; /* Quitamos los puntos por defecto */
-  padding-left: 0;
-  color: var(--marvel-text-secondary); /* Color de texto de la lista */
-}
-.info-list li {
-  padding: 0.25rem 0; /* Espaciado más sutil */
-  font-size: 0.875rem; /* text-sm */
-  border-bottom: 1px dashed var(--marvel-border-gray); /* Separador más sutil */
-}
-.info-list li:last-child {
-  border-bottom: none;
-}
-
-body {
-  background-color: var(--marvel-dark); /* Fondo oscuro base para toda la aplicación */
-  color: var(--marvel-light-gray);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  /* Eliminamos cualquier background-image del body si lo pusimos antes para el home */
-}
-
-/* Contenedor específico para las páginas de autenticación con fondo */
-.auth-page-background {
-  position: relative; /* Para el pseudo-elemento de superposición */
-  background-image: url('assets/images/venom-bg.jpg'); /* Ajusta la ruta si es diferente */
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed; /* Mantiene el fondo fijo al hacer scroll */
-  /* min-height ya está en el div del HTML (min-h-[calc(...)]) */
-  /* Los estilos de flex para centrar el formulario ya están en el HTML */
-}
-
-/* Superposición oscura semitransparente para mejorar legibilidad del formulario */
-.auth-page-background::before {
-  content: "";
-  position: absolute; /* Se posicionará relativo al .auth-page-background */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.65); /* Negro con 65% de opacidad. AJUSTA esta opacidad */
-  z-index: 1; /* Detrás del contenido del formulario, pero encima de la imagen de fondo */
-}
-
-/* Asegurar que el contenido del formulario esté por encima de la superposición */
-.auth-page-background .form-container-card {
-  position: relative; /* Para que el z-index funcione correctamente */
-  z-index: 2;
-  /* Los estilos de .form-container-card (fondo, borde, etc.) se mantienen */
-  /* Podrías querer hacer el fondo de la card ligeramente más opaco si es necesario */
-  /* background-color: rgba(32, 32, 32, 0.95); /* Ejemplo: var(--marvel-charcoal) un poco más opaco */
+/* Toast */
+.toast-notification {
+  background-color: #333;
+  color: white;
+  border-left: 4px solid var(--primary-red);
 }
