@@ -1,16 +1,26 @@
-# Marvel App 🔥
+# MovieApp 🎬
 
-Una aplicación hecha con Angular, Firebase y la API pública de Marvel. Permite buscar personajes, marcarlos como favoritos y ver detalles individuales. Incluye autenticación, filtros, paginación y sistema de favoritos por usuario.
+Una aplicación moderna y responsiva hecha con **Angular (Standalone)**, **Firebase** y la **API pública de The Movie Database (TMDB)**. Permite descubrir películas, aplicar filtros avanzados (categoría, rating, año), marcar títulos como favoritos y ver detalles individuales. Incluye autenticación de usuario y almacenamiento de favoritos en Firestore.
 
 ---
 
-## 🚀 Tecnologías usadas
+## ✨ Características Principales
 
-- Angular (standalone)
-- Firebase Auth + Firestore
-- TailwindCSS
-- Marvel API
-- TypeScript
+- **Base de Datos:** Consumo de datos en tiempo real de la API de TMDB.
+- **Autenticación:** Registro e inicio de sesión seguro con Firebase Auth.
+- **Búsqueda y Filtros:** Búsqueda por título, paginación, y filtrado avanzado por **Categoría (Género)**, Rating y Año de estreno.
+- **Favoritos:** Sistema de favoritos persistente y único por usuario (Firestore).
+- **Diseño:** Interfaz moderna, responsiva, y con estética de "Modo Oscuro Cinematográfico" utilizando Tailwind CSS.
+
+---
+
+## 🚀 Tecnologías y Herramientas
+
+- **Frontend:** Angular (Standalone Components)
+- **Base de Datos/Auth:** Firebase Authentication y Cloud Firestore
+- **Estilos:** Tailwind CSS (con estilos profesionales customizados)
+- **API:** The Movie Database (TMDB)
+- **Lenguaje:** TypeScript
 
 ---
 
@@ -20,13 +30,12 @@ Asegurate de tener instalado:
 
 - [Node.js](https://nodejs.org/) (recomendado: v18 o superior)
 - [Angular CLI](https://angular.io/cli):
-
 ```bash
 npm install -g @angular/cli
 ```
 
 - Una cuenta de Firebase (https://firebase.google.com/)
-- Una cuenta en https://developer.marvel.com para obtener las API Keys
+- Una cuenta en [The Movie Database (TMDB)](https://www.themoviedb.org/documentation/api) para obtener tu clave de API.
 - [Firebase CLI](https://firebase.google.com/docs/cli):
 
 ```bash
@@ -35,7 +44,7 @@ npm install -g @angular/cli
 
 ---
 
-## 📁 Instalación y configuración
+## ⚙️ Instalación y configuración
 
 1. Clonar el repositorio
 
@@ -52,33 +61,27 @@ npm install
 
 3. Configurar credenciales de Firebase
 
-En `src/app/app.config.ts`, reemplazá con tu configuración de Firebase:
+Crea y/o edita el archivo `src/environments/environment.ts` y añade tus claves de TMDB y Firebase:
 
 ```ts
-provideFirebaseApp(() =>
-  initializeApp({
-    apiKey: "TU_API_KEY",
-    authDomain: "TU_AUTH_DOMAIN",
-    projectId: "TU_PROJECT_ID",
-    storageBucket: "TU_BUCKET",
-    messagingSenderId: "TU_SENDER_ID",
-    appId: "TU_APP_ID",
-  })
-);
+// src/environments/environment.ts
+export const environment = {
+  production: false,
+  firebase: {
+    // 🔑 Reemplazar con tu config de Firebase
+    apiKey: "...",
+    authDomain: "...",
+    projectId: "...",
+    storageBucket: "...",
+    messagingSenderId: "...",
+    appId: "...",
+  },
+  // 🔑 Clave de API de TMDB
+  tmdbApiKey: 'TU_CLAVE_DE_TMDB_AQUÍ', 
+};
 ```
 
 Podés obtener estos datos desde el panel de tu proyecto en Firebase.
-
-4. Configurar las claves de Marvel API
-
-En `src/app/marvel.service.ts`:
-
-```ts
-private publicKey = 'TU_PUBLIC_KEY';
-private privateKey = 'TU_PRIVATE_KEY';
-```
-
-📌 Estas claves se obtienen desde https://developer.marvel.com una vez que creás una cuenta.
 
 ---
 
@@ -88,45 +91,38 @@ private privateKey = 'TU_PRIVATE_KEY';
 ng serve
 ```
 
-Abrí en el navegador: http://localhost:4200
-
----
-
-## 🔐 Funcionalidades clave
-
-- ✅ Registro e inicio de sesión con Firebase Auth
-- ✅ Buscador de personajes usando nameStartsWith
-- ✅ Paginación de resultados (10 por página)
-- ✅ Sistema de favoritos único por usuario (Firestore)
-- ✅ Filtros avanzados: ordenar por nombre o fecha, solo con descripción, modificado desde
-- ✅ Vista detallada del personaje
-- ✅ Toasts de feedback para agregar/quitar favoritos
-- ✅ Responsivo y moderno con Tailwind
+Abrí en el navegador: http://localhost:4200/peliculas
 
 ---
 
 ## 🌐 Deploy en Firebase Hosting
 
-1. Login e inicialización
+Asegúrate de que la carpeta pública en `firebase.json` sea la correcta para Angular:
 
-```bash
-firebase login
-firebase init hosting
-```
-
-- Elegí `dist/marvel-app` como carpeta pública
-- Activá el modo SPA (Single Page Application) seleccionando `Sí` a "rewrite all urls to /index.html"
-
-2. Build del proyecto
+1. Build del proyecto (genera los archivos estáticos)
 
 ```bash
 ng build
 ```
 
+2. Verificar Configuración: Abre `firebase.json` y asegúrate de que la sección hosting apunte a tu carpeta de build:
+
+```bash
+"hosting": {
+    "public": "dist/movie-app/browser",  // RUTA ESTÁNDAR PARA ANGULAR STANDALONE
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+}
+```
+
 3. Deploy
 
 ```bash
-firebase deploy
+firebase deploy --only hosting
 ```
 
 ---
@@ -136,23 +132,24 @@ firebase deploy
 ```
 src/
 ├── app/
-│   ├── pages/
-│   │   ├── login.ts / register.ts / marvel.ts / favoritos.ts / personaje.ts
-│   ├── marvel.service.ts
-│   ├── auth.service.ts
-│   └── toast.service.ts
+│   ├── pages/
+│   │   ├── peliculas-page.component.ts ⬅️ (Grid de Películas)
+│   │   ├── pelicula-detalle.component.ts ⬅️ (Detalle)
+│   │   └── favoritos.component.ts
+│   ├── movie.service.ts ⬅️ (API de TMDB)
+│   ├── auth.service.ts
+│   └── toast.service.ts
 ├── environments/
-├── assets/
-├── index.html
+└── styles.css (Estilos globales)
 ```
 
 ---
 
 ## 👥 Autores
 
-- [Axel Perez] - Desarrollo, Firebase y configuración de dependencias
+- [Axel Perez] - Desarrollo principal, migración a TMDB y configuración de dependencias
 
-- [Agustín Clavijo] - Diseño UI y filtrado
+- [Agustín Clavijo] - Diseño UI y sistema de filtros
 
 - [Leonardo Pelaytay] - Coordinación y autenticación
 
@@ -160,19 +157,14 @@ src/
 
 ## 🧪 Enlaces útiles
 
-- API de Marvel: https://developer.marvel.com/
+- API de TMDB: https://www.themoviedb.org/documentation/api
 - Firebase Console: https://console.firebase.google.com/
 - Angular: https://angular.io/
 - TailwindCSS: https://tailwindcss.com/
 
 ---
 
-## 📷 Informe
-
-Este proyecto cuenta con un informe detallado en PDF explicando paso a paso el desarrollo, tecnologías utilizadas, estructura, capturas, y más.
-
----
-
 ## 🗃️ Licencia
 
 Este proyecto es de uso académico y libre distribución con fines educativos.
+
