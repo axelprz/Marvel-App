@@ -9,12 +9,19 @@ import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Manejo de errores del navegador
     provideBrowserGlobalErrorListeners(),
+    // Optimización de rendimiento
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // Habilita el cliente http globalmente
     provideHttpClient(),
+    // Inyectamos nuestras rutas
     provideRouter(routes), 
+    // Integramos Firebase
     provideFirebaseApp(() => initializeApp(environment.firebase)),
+    // Habilitamos la autenticación
     provideAuth(() => getAuth()),
+    // Habilitamos la base de datos de Firestore
     provideFirestore(() => getFirestore())
   ]
 };

@@ -16,13 +16,15 @@ import { finalize } from 'rxjs/operators';
 export class PeliculasPageComponent implements OnInit {
   movies: Movie[] = []; 
   genres: Genre[] = []; // Lista de géneros
-  loading = true;
+  loading = true; // Controla el spinner de carga
   searchTerm = '';
+  // Variables de paginación
   offset = 0; 
   limit = 20;
   total = 0;
   
   // Filtros
+  // Usamos ngModel en el HTML para conectar esto con los inputs
   orderBy: string = 'popularity.desc';
   onlyWithPopular = false;
   releaseYear: number | null = null;
@@ -30,12 +32,14 @@ export class PeliculasPageComponent implements OnInit {
   
   currentPage: number = 1; 
   totalPages: number = 0;
-  
+  //Nos permite verificar si el favorito es 0 o 1
   favorites: Set<number> = new Set();
+  // Evita que el usuario clickee muchas veces sobre el bóton de favoritos, evitando errores.
   pending: Set<number> = new Set();
 
   constructor(public movieService: MovieService, private auth: Auth, private toast: ToastService) {}
 
+  // Al iniciar, cargamos todo en paralelo: favoritos, generos y lista inicial
   ngOnInit() {
     this.markFavorites();
     this.loadGenres();
@@ -51,10 +55,12 @@ export class PeliculasPageComponent implements OnInit {
     });
   }
 
+  // Sincroniza los corazones rojos con la base de datos al entrar
   async markFavorites() {
     this.favorites = await this.movieService.getFavoriteIds();
   }
-  
+
+  // Esta función decide que endpoint llamar
   loadMovies() {
     this.loading = true;
     const page = Math.floor(this.offset / this.limit) + 1;
@@ -94,6 +100,7 @@ export class PeliculasPageComponent implements OnInit {
     this.markFavorites();
   }
 
+  // Verificamos si el usuario tocó algun filtro
   isFilterActive(): boolean {
       return (
           this.orderBy !== 'popularity.desc' ||
@@ -118,6 +125,7 @@ export class PeliculasPageComponent implements OnInit {
 
   discoverMovies(page: number) {
       this.loading = true;
+      // Mapeo las variables locales a paramtros de la API
       const params: DiscoverParams = {
           page: page,
           sort_by: this.orderBy,
@@ -138,6 +146,7 @@ export class PeliculasPageComponent implements OnInit {
         });
   }
 
+  // Reseteamos la paginacion al buscar
   onSearch() {
     this.offset = 0; 
     this.loadMovies();
@@ -154,6 +163,7 @@ export class PeliculasPageComponent implements OnInit {
     this.loadMovies();
   }
 
+  // Resetea todos los filtros a su estado inicial
   clearFilters() {
     this.orderBy = 'popularity.desc'; 
     this.onlyWithPopular = false;
@@ -166,21 +176,21 @@ export class PeliculasPageComponent implements OnInit {
   
   async toggleFavorite(movie: Movie) { 
     const id = movie.id;
-    this.pending.add(id);
+    this.pending.add(id); // Se bloquea el boton visualmente
     try {
       if (this.favorites.has(id)) {
         await this.movieService.removeFavorite(id);
-        this.favorites.delete(id);
+        this.favorites.delete(id); // Actualizamos estado local
         this.toast.show('❌ Eliminado de favoritos');
       } else {
         await this.movieService.addFavorite(movie); 
-        this.favorites.add(id);
+        this.favorites.add(id); // Actualizamos estado local
         this.toast.show('✅ Agregado a favoritos');
       }
     } catch (e) {
         this.toast.show('🚨 Error. ¿Iniciaste sesión?');
     } finally {
-      this.pending.delete(id);
+      this.pending.delete(id); // Se desbloquea el botón
     }
   }
 }

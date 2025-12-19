@@ -12,8 +12,9 @@ import { MovieService, Movie } from '../movie.service';
 })
 export class PeliculaDetalleComponent implements OnInit {
   movie: Movie | undefined;
-  loading = true;
+  loading = true; // Mostrar el spinner de carga mientras traemos los datos
 
+  // Inyectamos dependencias. route nos permite leer la URL actual y location el historia del navegador.
   constructor(
     private route: ActivatedRoute, 
     public movieService: MovieService,
@@ -26,12 +27,13 @@ export class PeliculaDetalleComponent implements OnInit {
 
   loadMovieDetail() {
     this.loading = true;
+    // Tomamos el id de la URL y lo convertimos en número
     const id = Number(this.route.snapshot.paramMap.get('id'));
-
+    // Llamamos al servicio pasando ese ID
     this.movieService.getMovieById(id).subscribe({
       next: (data: Movie) => {
         this.movie = data;
-        this.loading = false;
+        this.loading = false; // Ocultamos spinner
       },
       error: (err) => {
         console.error('Error al cargar la película:', err);
@@ -41,6 +43,7 @@ export class PeliculaDetalleComponent implements OnInit {
     });
   }
 
+  // Esto nos permite emular el botón de "Atrás" del navegador
   volver() {
     this.location.back();
   }

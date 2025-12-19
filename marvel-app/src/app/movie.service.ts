@@ -5,6 +5,7 @@ import { Firestore, collection, doc, setDoc, deleteDoc, getDoc, getDocs, where, 
 import { Auth } from '@angular/fire/auth';
 import { environment } from '../environments/environment';
 
+// Definición de interfaces
 export interface Movie {
   id: number;
   title: string;
@@ -38,16 +39,18 @@ export interface DiscoverParams {
 
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root' // Una única instancia del servicio para toda la página
 })
 export class MovieService {
+  // Seguridad y configuración de la API
   private apiKey = environment.tmdbApiKey; 
   private baseUrl = 'https://api.themoviedb.org/3';
   private imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
+  // Inyección de dependencias
   constructor(private http: HttpClient, private firestore: Firestore, private auth: Auth) {}
 
-
+  // Evita errores visuales si la película no tiene imagen
   getPosterUrl(posterPath: string | null): string {
     if (posterPath) {
       return `${this.imageBaseUrl}${posterPath}`;
@@ -55,31 +58,40 @@ export class MovieService {
     return 'assets/placeholder-image.png'; 
   }
 
+  // Traemos las películas más populares
   getPopularMovies(page: number = 1): Observable<MovieListResponse> {
     const url = `${this.baseUrl}/movie/popular?api_key=${this.apiKey}&language=es-ES&page=${page}`;
     return this.http.get<MovieListResponse>(url);
   }
 
+  // Metodo para buscar películas
   searchMovies(
     name: string,
     page: number = 1
   ): Observable<MovieListResponse> {
     
+    // Si el input está vació o solo tiene espacios, no buscamos nada.
     if (name.trim() === '') {
       return this.getPopularMovies(page); 
     }
     
+    // Sanitizamos el texto para que los caracteres especiales no rompan la URL
     const url = `${this.baseUrl}/search/movie?api_key=${this.apiKey}&language=es-ES&query=${encodeURIComponent(name)}&page=${page}`;
     
+    // Devolvemos un Observable para que el componente se suscriba y reaccione a la respuesta
     return this.http.get<MovieListResponse>(url);
   }
 
+  // Filtrado avanzado
   discoverMovies(params: DiscoverParams): Observable<MovieListResponse> {
+    // Clase para construir Query Strings de forma segura
     let httpParams = new HttpParams();
     
+    // Parametros obligatorios
     httpParams = httpParams.set('api_key', this.apiKey);
     httpParams = httpParams.set('language', 'es-ES');
 
+    // Solo añadimos los parametros que el usuario eligio
     if (params.page) httpParams = httpParams.set('page', params.page.toString());
     if (params.sort_by) httpParams = httpParams.set('sort_by', params.sort_by);
     if (params.with_genres) httpParams = httpParams.set('with_genres', params.with_genres);
@@ -88,6 +100,7 @@ export class MovieService {
 
     const url = `${this.baseUrl}/discover/movie`;
 
+    // Pasamos los params al objeto de opciones del HttpCliente
     return this.http.get<MovieListResponse>(url, { params: httpParams });
   }
 
@@ -101,11 +114,14 @@ export class MovieService {
     return this.http.get<{ genres: Genre[] }>(url);
   }
 
+  // Usamos promesas para operaciones de base de datos únicas
   async addFavorite(movie: Movie) {
     const user = this.auth.currentUser;
-    if (!user) return;
+    if (!user) return; // No guardamos si no hay usuario logueado
     
+    // Anidamos la estructura para garantizar privacidad de datos por usuario
     const ref = doc(this.firestore, `users/${user.uid}/favorites/${movie.id}`);
+    // Creamos el documento si no existe, o lo sobreescribimos si ya está.
     await setDoc(ref, movie); 
   }
 
@@ -113,6 +129,7 @@ export class MovieService {
     const user = this.auth.currentUser;
     if (!user) return;
 
+    // Localizamos el documento exacto por ID y lo eliminamos
     const ref = doc(this.firestore, `users/${user.uid}/favorites/${movieId}`);
     await deleteDoc(ref);
   }
@@ -135,13 +152,16 @@ export class MovieService {
     return snap.docs.map(doc => doc.data() as Movie);
   }
 
+  // Descargamos solo los IDs y los guardamos en un set
   async getFavoriteIds(): Promise<Set<number>> {
     const user = this.auth.currentUser;
     if (!user) return new Set();
 
     const ref = collection(this.firestore, `users/${user.uid}/favorites`);
     const snap = await getDocs(ref);
+    // Mapeamos los documentos a un array de IDs
     const ids = snap.docs.map(doc => Number(doc.id));
+    // Retornamos el set
     return new Set(ids);
   }
 }

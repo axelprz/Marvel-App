@@ -1,21 +1,22 @@
-// login.component.ts
-
 import { Component } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common'; // Aseguramos que CommonModule esté si usamos directivas como *ngIf
+import { CommonModule } from '@angular/common';
+import { ToastService } from '../toast.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink, CommonModule], // Añadimos CommonModule por buena práctica
+  // Usamos FormsModule para usar ngModel y capturar lo que el usuario escribe y RouterLink para el enlace de registro.
+  imports: [FormsModule, RouterLink, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class LoginComponent {
+  // Variables vinculadas al HTML
   email = '';
   password = '';
 
@@ -25,7 +26,6 @@ export class LoginComponent {
     this.auth.login(this.email, this.password)
       .then(() => {
         alert('Bienvenido');
-        // 💡 CAMBIO CRUCIAL: Redirigir a la nueva ruta principal de películas
         this.router.navigate(['/peliculas']); 
       })
       .catch(error => alert(error.message));
