@@ -1,11 +1,32 @@
+/**
+ * SERVICIO CENTRAL DE LA APLICACIÓN (MovieService)
+ * ------------------------------------------------
+ * Propósito: Centralizar toda la lógica de datos. Ningún componente
+ * debe llamar a la API o a Firebase directamente; todo pasa por aquí.
+ *
+ * Funcionalidades:
+ * 1. API Client (TMDB):
+ * - Consume endpoints de Películas y Series.
+ * - Gestiona la paginación y la búsqueda.
+ * - Utiliza Interfaces (Movie, TvShow) para evitar errores de tipo.
+ *
+ * 2. Firebase Integration (Firestore):
+ * - Gestiona la colección 'users/{uid}/favorites'.
+ * - Implementa lógica para añadir/quitar favoritos.
+ * - Resuelve problemas de concurrencia usando 'firstValueFrom' y 'authState'
+ * para asegurar que el usuario esté cargado antes de pedir datos.
+ *
+ * Patrón utilizado: Singleton (providedIn: 'root').
+ */
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
-import { Firestore, collection, doc, setDoc, deleteDoc, getDoc, getDocs, where, query } from '@angular/fire/firestore';
-import { Auth } from '@angular/fire/auth';
+import { Observable, firstValueFrom } from 'rxjs'; 
+import { Firestore, collection, doc, setDoc, deleteDoc, getDoc, getDocs } from '@angular/fire/firestore';
+import { Auth, authState } from '@angular/fire/auth'; 
 import { environment } from '../environments/environment';
+import { take } from 'rxjs/operators';
 
-// Definición de interfaces
 export interface Movie {
   id: number;
   title: string;
@@ -24,6 +45,24 @@ export interface MovieListResponse {
   total_results: number;
 }
 
+export interface TvShow {
+  id: number;
+  name: string;
+  poster_path: string | null;
+  first_air_date: string;
+  overview: string;
+  vote_average: number;
+  genre_ids?: number[];
+  vote_count?: number;
+}
+
+export interface TvShowListResponse {
+  page: number;
+  results: TvShow[];
+  total_pages: number;
+  total_results: number;
+}
+
 export interface Genre {
   id: number;
   name: string;
@@ -37,20 +76,16 @@ export interface DiscoverParams {
   vote_count_gte?: number;
 }
 
-
 @Injectable({
-  providedIn: 'root' // Una única instancia del servicio para toda la página
+  providedIn: 'root'
 })
 export class MovieService {
-  // Seguridad y configuración de la API
   private apiKey = environment.tmdbApiKey; 
   private baseUrl = 'https://api.themoviedb.org/3';
   private imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
-  // Inyección de dependencias
   constructor(private http: HttpClient, private firestore: Firestore, private auth: Auth) {}
 
-  // Evita errores visuales si la película no tiene imagen
   getPosterUrl(posterPath: string | null): string {
     if (posterPath) {
       return `${this.imageBaseUrl}${posterPath}`;
@@ -58,40 +93,24 @@ export class MovieService {
     return 'assets/placeholder-image.png'; 
   }
 
-  // Traemos las películas más populares
+  // --- MÉTODOS PÚBLICOS (API) ---
+
   getPopularMovies(page: number = 1): Observable<MovieListResponse> {
     const url = `${this.baseUrl}/movie/popular?api_key=${this.apiKey}&language=es-ES&page=${page}`;
     return this.http.get<MovieListResponse>(url);
   }
 
-  // Metodo para buscar películas
-  searchMovies(
-    name: string,
-    page: number = 1
-  ): Observable<MovieListResponse> {
-    
-    // Si el input está vació o solo tiene espacios, no buscamos nada.
-    if (name.trim() === '') {
-      return this.getPopularMovies(page); 
-    }
-    
-    // Sanitizamos el texto para que los caracteres especiales no rompan la URL
+  searchMovies(name: string, page: number = 1): Observable<MovieListResponse> {
+    if (name.trim() === '') return this.getPopularMovies(page); 
     const url = `${this.baseUrl}/search/movie?api_key=${this.apiKey}&language=es-ES&query=${encodeURIComponent(name)}&page=${page}`;
-    
-    // Devolvemos un Observable para que el componente se suscriba y reaccione a la respuesta
     return this.http.get<MovieListResponse>(url);
   }
 
-  // Filtrado avanzado
   discoverMovies(params: DiscoverParams): Observable<MovieListResponse> {
-    // Clase para construir Query Strings de forma segura
     let httpParams = new HttpParams();
-    
-    // Parametros obligatorios
     httpParams = httpParams.set('api_key', this.apiKey);
     httpParams = httpParams.set('language', 'es-ES');
 
-    // Solo añadimos los parametros que el usuario eligio
     if (params.page) httpParams = httpParams.set('page', params.page.toString());
     if (params.sort_by) httpParams = httpParams.set('sort_by', params.sort_by);
     if (params.with_genres) httpParams = httpParams.set('with_genres', params.with_genres);
@@ -99,8 +118,6 @@ export class MovieService {
     if (params.vote_count_gte) httpParams = httpParams.set('vote_count.gte', params.vote_count_gte.toString());
 
     const url = `${this.baseUrl}/discover/movie`;
-
-    // Pasamos los params al objeto de opciones del HttpCliente
     return this.http.get<MovieListResponse>(url, { params: httpParams });
   }
 
@@ -114,28 +131,83 @@ export class MovieService {
     return this.http.get<{ genres: Genre[] }>(url);
   }
 
-  // Usamos promesas para operaciones de base de datos únicas
-  async addFavorite(movie: Movie) {
-    const user = this.auth.currentUser;
-    if (!user) return; // No guardamos si no hay usuario logueado
+  getPopularSeries(page: number = 1): Observable<TvShowListResponse> {
+    const url = `${this.baseUrl}/tv/popular?api_key=${this.apiKey}&language=es-ES&page=${page}`;
+    return this.http.get<TvShowListResponse>(url);
+  }
+
+  searchSeries(name: string, page: number = 1): Observable<TvShowListResponse> {
+    if (name.trim() === '') return this.getPopularSeries(page);
+    const url = `${this.baseUrl}/search/tv?api_key=${this.apiKey}&language=es-ES&query=${encodeURIComponent(name)}&page=${page}`;
+    return this.http.get<TvShowListResponse>(url);
+  }
+
+  getSeriesById(id: number): Observable<TvShow> {
+    const url = `${this.baseUrl}/tv/${id}?api_key=${this.apiKey}&language=es-ES`;
+    return this.http.get<TvShow>(url);
+  }
+
+  // --- MÉTODOS PRIVADOS (Helper para obtener usuario) ---
+  
+  // Espera a que Firebase termine de cargar el usuario antes de devolverlo
+  private async getCurrentUser() {
+    console.log('⏳ Esperando authState de Firebase...');
+    const user = await firstValueFrom(authState(this.auth).pipe(take(1)));
+    if (user) {
+        console.log('✅ AuthState resuelto: Usuario LOGUEADO ->', user.uid);
+    } else {
+        console.log('❌ AuthState resuelto: Usuario NO LOGUEADO (null)');
+    }
+    return user;
+  }
+
+  // --- MÉTODOS DE FAVORITOS (FIREBASE) ---
+
+  async addFavorite(item: any, type: 'movie' | 'tv') {
+    console.log(`🎬 Intentando agregar favorito. ID: ${item.id}, Tipo: ${type}`);
+    const user = await this.getCurrentUser(); // Esperamos al usuario
     
-    // Anidamos la estructura para garantizar privacidad de datos por usuario
-    const ref = doc(this.firestore, `users/${user.uid}/favorites/${movie.id}`);
-    // Creamos el documento si no existe, o lo sobreescribimos si ya está.
-    await setDoc(ref, movie); 
+    if (!user) {
+        console.error('🚫 Bloqueado: No se detectó usuario en addFavorite');
+        throw new Error('Usuario no autenticado'); 
+    }
+    
+    const itemToSave = { ...item, media_type: type };
+    const path = `users/${user.uid}/favorites/${item.id}`;
+    const ref = doc(this.firestore, path);
+    
+    console.log(`💾 Escribiendo en Firestore: ${path}`);
+    
+    try {
+        await setDoc(ref, itemToSave); 
+        console.log('🎉 Escritura exitosa en Firestore');
+    } catch (error: any) {
+        console.error('🔥 ERROR CRÍTICO al guardar en Firestore:', error);
+        if (error.code === 'permission-denied') {
+            console.warn('⚠️ ALERTA: Problema de permisos. Revisa las reglas de seguridad en Firebase Console.');
+        }
+        throw error;
+    }
   }
 
   async removeFavorite(movieId: number) {
-    const user = this.auth.currentUser;
-    if (!user) return;
+    console.log(`🗑️ Intentando eliminar favorito. ID: ${movieId}`);
+    const user = await this.getCurrentUser();
+    if (!user) throw new Error('Usuario no autenticado');
 
-    // Localizamos el documento exacto por ID y lo eliminamos
     const ref = doc(this.firestore, `users/${user.uid}/favorites/${movieId}`);
-    await deleteDoc(ref);
+    
+    try {
+        await deleteDoc(ref);
+        console.log('🗑️ Eliminación exitosa');
+    } catch (error) {
+        console.error('🔥 Error al eliminar:', error);
+        throw error;
+    }
   }
 
   async isFavorite(movieId: number): Promise<boolean> {
-    const user = this.auth.currentUser;
+    const user = await this.getCurrentUser();
     if (!user) return false;
 
     const ref = doc(this.firestore, `users/${user.uid}/favorites/${movieId}`);
@@ -143,25 +215,38 @@ export class MovieService {
     return snap.exists();
   }
 
-  async getFavorites(): Promise<Movie[]> {
-    const user = this.auth.currentUser;
-    if (!user) return [];
+  async getFavorites(): Promise<any[]> {
+    console.log('📥 Obteniendo lista de favoritos...');
+    const user = await this.getCurrentUser(); 
+    if (!user) {
+        console.log('📭 No hay usuario, retornando lista vacía.');
+        return [];
+    }
 
     const ref = collection(this.firestore, `users/${user.uid}/favorites`);
-    const snap = await getDocs(ref);
-    return snap.docs.map(doc => doc.data() as Movie);
+    try {
+        const snap = await getDocs(ref);
+        console.log(`📦 Favoritos descargados: ${snap.size} elementos.`);
+        return snap.docs.map(doc => doc.data());
+    } catch (error) {
+        console.error('🔥 Error al leer favoritos:', error);
+        return [];
+    }
   }
 
-  // Descargamos solo los IDs y los guardamos en un set
   async getFavoriteIds(): Promise<Set<number>> {
-    const user = this.auth.currentUser;
+    const user = await this.getCurrentUser();
     if (!user) return new Set();
 
     const ref = collection(this.firestore, `users/${user.uid}/favorites`);
-    const snap = await getDocs(ref);
-    // Mapeamos los documentos a un array de IDs
-    const ids = snap.docs.map(doc => Number(doc.id));
-    // Retornamos el set
-    return new Set(ids);
+    try {
+        const snap = await getDocs(ref);
+        const ids = snap.docs.map(doc => Number(doc.id));
+        return new Set(ids);
+    } catch (error) {
+        console.error('🔥 Error al leer IDs de favoritos:', error);
+        return new Set();
+    }
   }
 }
+

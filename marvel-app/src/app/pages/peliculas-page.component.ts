@@ -1,3 +1,18 @@
+/**
+ * CONTROLADOR DE LA VISTA DE PELÍCULAS
+ * ------------------------------------
+ * Este componente gestiona la pantalla principal.
+ *
+ * Lógica Principal:
+ * - ngOnInit: Carga inicial paralela (Géneros, Favoritos y Películas).
+ * - Sistema de Filtrado: Detecta si el usuario está buscando o filtrando
+ * y decide qué método del servicio llamar (searchMovies vs discoverMovies).
+ * - Paginación Manual: Controla el 'offset' y la página actual para
+ * navegar por los resultados de la API.
+ * - Gestión de Favoritos: Mantiene un Set<number> local de IDs para
+ * pintar los corazones rojos instantáneamente sin recargar la página.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -183,7 +198,8 @@ export class PeliculasPageComponent implements OnInit {
         this.favorites.delete(id); // Actualizamos estado local
         this.toast.show('❌ Eliminado de favoritos');
       } else {
-        await this.movieService.addFavorite(movie); 
+        // CORRECCIÓN: Ahora pasamos 'movie' como segundo argumento
+        await this.movieService.addFavorite(movie, 'movie'); 
         this.favorites.add(id); // Actualizamos estado local
         this.toast.show('✅ Agregado a favoritos');
       }

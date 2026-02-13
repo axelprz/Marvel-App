@@ -1,0 +1,66 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <h1 class="text-3xl font-bold text-marvel-red flex items-center gap-2">
+      <span class="text-4xl">📺</span> Series de TV
+    </h1>
+    
+    <div class="relative w-full md:w-96">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+        placeholder="Buscar series..." 
+        class="w-full bg-marvel-dark-gray text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-marvel-red transition-all"
+      >
+      <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-marvel-red"></div>
+    </div>
+  }
+
+  @if (!loading) {
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      @for (serie of series; track serie.id) {
+        <div class="movie-card bg-marvel-dark-gray rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group relative">
+            
+            <div class="relative aspect-[2/3] overflow-hidden">
+              <img 
+                [src]="movieService.getPosterUrl(serie.poster_path)" 
+                [alt]="serie.name"
+                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+              >
+              
+              <div class="absolute top-2 right-2 bg-black/80 text-marvel-red font-bold rounded-full w-10 h-10 flex items-center justify-center border-2 border-marvel-red text-sm">
+                {{ serie.vote_average | number:'1.1-1' }}
+              </div>
+            </div>
+
+            <div class="p-4">
+              <h3 class="text-white font-bold text-lg truncate mb-1" [title]="serie.name">
+                {{ serie.name }}
+              </h3>
+              <p class="text-gray-400 text-sm mb-3">
+                {{ serie.first_air_date | date:'yyyy' }}
+              </p>
+              
+            <a [routerLink]="['/serie', serie.id]" class="block w-full text-center bg-marvel-red hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors text-sm cursor-pointer">
+  Ver Detalles
+</a>
+            </div>
+        </div>
+      }
+    </div>
+
+    @if (series.length === 0) {
+      <div class="text-center text-gray-400 py-12">
+        <p class="text-xl">No se encontraron series que coincidan con tu búsqueda.</p>
+      </div>
+    }
+  }
+</div>

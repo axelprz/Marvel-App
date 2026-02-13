@@ -38,7 +38,7 @@
           <input
             [(ngModel)]="searchTerm"
             name="search"
-            placeholder="Buscar película por título en tus favoritos..."
+            placeholder="Buscar por título en tus favoritos..."
             class="search-input flex-grow"
             (input)="applyFilters()"
             />
@@ -90,27 +90,38 @@
               </button>
             </div>
           </div>
+          
           <div class="character-grid">
-            @for (movie of filteredFavorites; track movie.id) {
-              <div class="character-card">
-                <a [routerLink]="['/pelicula', movie.id]" class="character-link">
-                  <div class="image-container">
+            @for (item of filteredFavorites; track item.id) {
+              <div class="character-card relative group">
+                
+                <a [routerLink]="item.media_type === 'tv' ? ['/serie', item.id] : ['/pelicula', item.id]" class="character-link block">
+                  
+                  <div class="image-container relative">
                     <img
-                      [src]="movieService.getPosterUrl(movie.poster_path)"
-                      [alt]="movie.title"
-                      class="character-image"
+                      [src]="movieService.getPosterUrl(item.poster_path)"
+                      [alt]="item.title || item.name"
+                      class="character-image w-full h-auto"
                       />
                       <div class="image-overlay"></div>
+                      
+                      <span class="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded z-10">
+                        {{ item.media_type === 'tv' ? 'Serie' : 'Película' }}
+                      </span>
                     </div>
-                    <h3 class="character-name">{{ movie.title }}</h3>
+
+                    <h3 class="character-name mt-2 font-bold text-center">
+                      {{ item.title || item.name }}
+                    </h3>
                   </a>
+
                   <button
-                    (click)="remove(movie.id); $event.stopPropagation(); $event.preventDefault()"
-                    class="favorite-button remove-favorite"
+                    (click)="remove(item.id); $event.stopPropagation(); $event.preventDefault()"
+                    class="favorite-button remove-favorite absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 w-8 h-8 flex items-center justify-center hover:bg-red-700 transition z-20"
                     title="Quitar de favoritos"
-                    [disabled]="pending.has(movie.id)"
+                    [disabled]="pending.has(item.id)"
                     >
-                    <span [ngClass]="{'is-pending': pending.has(movie.id)}">×</span>
+                    <span [ngClass]="{'opacity-50': pending.has(item.id)}">×</span>
                   </button>
                 </div>
               }
